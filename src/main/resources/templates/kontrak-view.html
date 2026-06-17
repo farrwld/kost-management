@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Manajemen Kontrak Sewa</title>
+    <link th:href="@{https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css}" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+    <div class="container mt-5">
+        <div class="card shadow">
+            <div class="card-header bg-dark text-white">
+                <h3 class="mb-0">Daftar Kontrak Sewa Aktif</h3>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered table-striped mt-3">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID Kontrak</th>
+                            <th>Nama Penghuni</th>
+                            <th>No Kamar</th>
+                            <th>Tgl Mulai</th>
+                            <th>Tgl Selesai</th>
+                            <th>Deposit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="kontrak : ${daftarKontrak}">
+                            <td th:text="${kontrak.idKontrak}">1</td>
+                            <td th:text="${kontrak.penghuni.username}">budi</td>
+                            <td th:text="${kontrak.kamar.noKamar}">A101</td>
+                            <td th:text="${kontrak.tglMulai}">2026-06-01</td>
+                            <td th:text="${kontrak.tglSelesai}">2027-06-01</td>
+                            <td th:text="'Rp ' + ${#numbers.formatDecimal(kontrak.deposit, 0, 'POINT', 0, 'COMMA')}">Rp
+                                500.000</td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(daftarKontrak)}">
+                            <td colspan="6" class="text-center text-muted">Belum ada kontrak sewa yang terdaftar.</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="mt-3">
+                    <a href="/kamar" class="btn btn-primary">Cek Status Kamar Terbaru</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

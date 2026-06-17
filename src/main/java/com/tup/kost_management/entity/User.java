@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "users")
@@ -18,10 +19,12 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idUser;
 
+    @JsonIgnore
     @NotBlank(message = "Username tidak boleh kosong")
     @Column(unique = true, nullable = false)
     private String username;
 
+    @JsonIgnore
     @NotBlank(message = "Password tidak boleh kosong")
     @Column(nullable = false)
     private String password;
@@ -29,4 +32,5 @@ public class User {
     @NotBlank(message = "Role harus ditentukan")
     @Column(nullable = false)
     private String role; // Nilainya bisa "ADMIN" atau "PENGHUNI"
+
 }

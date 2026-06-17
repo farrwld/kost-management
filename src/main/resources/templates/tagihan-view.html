@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Manajemen Tagihan Kos</title>
+    <link th:href="@{https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css}" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+    <div class="container mt-5">
+        <div class="card shadow">
+            <div class="card-header bg-warning text-dark">
+                <h3 class="mb-0">Daftar Tagihan Bulanan Penghuni</h3>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered table-striped mt-3">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID Tagihan</th>
+                            <th>Nama Penghuni</th>
+                            <th>Periode</th>
+                            <th>Jumlah Tagihan</th>
+                            <th>Jatuh Tempo</th>
+                            <th>Status Bayar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="tagihan : ${daftarTagihan}">
+                            <td th:text="${tagihan.idTagihan}">1</td>
+                            <td th:text="${tagihan.penghuni.username}">User</td>
+                            <td th:text="${tagihan.periode}">Juni 2026</td>
+                            <td
+                                th:text="'Rp ' + ${#numbers.formatDecimal(tagihan.jumlahTagihan, 0, 'POINT', 0, 'COMMA')}">
+                                Rp 0</td>
+                            <td th:text="${tagihan.jatuhTempo}">2026-06-25</td>
+                            <td>
+                                <span th:text="${tagihan.statusBayar}"
+                                    th:classappend="${tagihan.statusBayar == 'LUNAS'} ? 'badge bg-success' : 'badge bg-danger'">
+                                    Status
+                                </span>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(daftarTagihan)}">
+                            <td colspan="6" class="text-center text-muted">Belum ada data tagihan yang diterbitkan.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
