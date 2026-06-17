@@ -1,6 +1,7 @@
 package com.tup.kost_management.service;
 
 import com.tup.kost_management.entity.Tagihan;
+import com.tup.kost_management.entity.Penghuni;
 import com.tup.kost_management.repository.TagihanRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,6 +35,17 @@ public class TagihanService {
         if (tagihanOpt.isPresent()) {
             Tagihan tagihan = tagihanOpt.get();
             tagihan.setStatusBayar("LUNAS"); // Mengubah status
+
+            // 1. Ambil ID penghuni yang asli
+            Long idPenghuniAsli = tagihan.getPenghuni().getIdUser();
+            
+            // 2. Buat objek kosong baru dan hanya set ID-nya saja
+            Penghuni penghuniDibersihkan = new Penghuni();
+            penghuniDibersihkan.setIdUser(idPenghuniAsli);
+            
+            // 3. Pasang objek bersih ini kembali ke tagihan
+            tagihan.setPenghuni(penghuniDibersihkan);
+           
             return tagihanRepository.save(tagihan); // Mengembalikan data sebagai objek "Invoice"
         }
         throw new RuntimeException("Tagihan tidak ditemukan dengan ID: " + idTagihan);
