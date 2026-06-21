@@ -2,7 +2,6 @@ package com.tup.kost_management.controller;
 
 import com.tup.kost_management.entity.Keluhan;
 import com.tup.kost_management.service.KeluhanService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -46,7 +46,7 @@ public class LoginController {
             // Cek apakah password yang diinput cocok dengan di database
             if (userDariDb.getPassword().equals(password)) {
                 session.setAttribute("userRole", userDariDb.getRole());
-                session.setAttribute("userName", userDariDb.getUsername()); // Memunculkan username asli di dashboard
+                session.setAttribute("userName", userDariDb.getUsername()); 
                 return "redirect:/";
             }
         }
