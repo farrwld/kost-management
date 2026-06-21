@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Daftar Keluhan & Maintenance</title>
+    <link th:href="@{https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css}" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+    <div class="container mt-5">
+        <div class="card shadow">
+            <div class="card-header bg-danger text-white">
+                <h3 class="mb-0">Daftar Keluhan Fasilitas Kamar</h3>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered table-striped mt-3">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID Laporan</th>
+                            <th>Nama Penghuni</th>
+                            <th>Tanggal Masuk</th>
+                            <th>Deskripsi Kerusakan</th>
+                            <th>Status Perbaikan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="keluhan : ${daftarKeluhan}">
+                            <td th:text="${keluhan.idKeluhan}">1</td>
+                            <td th:text="${keluhan.penghuni.username}">User</td>
+                            <td th:text="${keluhan.tglKeluhan}">2026-06-21</td>
+                            <td th:text="${keluhan.deskripsi}">AC Bocor</td>
+                            <td>
+                                <span th:text="${keluhan.statusPerbaikan}"
+                                    th:classappend="${keluhan.statusPerbaikan == 'PENDING'} ? 'badge bg-secondary' : (${keluhan.statusPerbaikan == 'DIPROSES'} ? 'badge bg-warning text-dark' : 'badge bg-success')">
+                                    Status
+                                </span>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(daftarKeluhan)}">
+                            <td colspan="5" class="text-center text-muted">Belum ada laporan keluhan dari penghuni.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

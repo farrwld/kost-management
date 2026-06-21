@@ -17,3 +17,4 @@ public class Admin extends User {
     // melainkan hanya memiliki operasi/behavior khusus seperti manageKamar(), dll.
     // Atribut tambahan bisa ditambahkan di sini jika nanti diperlukan (misal: namaAdmin).
 }
+
