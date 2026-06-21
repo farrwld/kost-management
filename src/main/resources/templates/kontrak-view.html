@@ -5,24 +5,41 @@
     <meta charset="UTF-8">
     <title>Manajemen Kontrak Sewa</title>
     <link th:href="@{https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css}" rel="stylesheet">
 </head>
 
 <body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="/"><i class="bi bi-building-fill me-2"></i>Kost Management</a>
+            <a href="/" class="btn btn-outline-light btn-sm"><i class="bi bi-arrow-left me-1"></i>Kembali ke
+                Dashboard</a>
+        </div>
+    </nav>
+
     <div class="container mt-5">
-        <div class="card shadow">
-            <div class="card-header bg-dark text-white">
-                <h3 class="mb-0">Daftar Kontrak Sewa Aktif</h3>
+        <div class="card shadow border-0">
+            <div class="card-header bg-dark text-white py-3 d-flex justify-content-between align-items-center">
+                <h3 class="mb-0 fw-bold"><i class="bi bi-file-earmark-text-fill me-2"></i>Daftar Kontrak Sewa Penghuni
+                </h3>
+                <button class="btn btn-primary btn-sm fw-semibold" data-bs-toggle="modal"
+                    data-bs-target="#modalKontrak">
+                    <i class="bi bi-plus-circle me-1"></i> Buat Kontrak Baru
+                </button>
             </div>
-            <div class="card-body">
-                <table class="table table-bordered table-striped mt-3">
+
+            <div class="card-body p-4">
+                <table class="table table-bordered table-striped align-middle mt-2">
                     <thead class="table-dark">
                         <tr>
                             <th>ID Kontrak</th>
                             <th>Nama Penghuni</th>
                             <th>No Kamar</th>
                             <th>Tgl Mulai</th>
-                            <th>Tgl Selesai</th>
+                            <th>Masa Berlaku</th>
                             <th>Deposit</th>
+                            <th>Status</th>
+                            <th class="text-center">Aksi Admin</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -34,18 +51,87 @@
                             <td th:text="${kontrak.tglSelesai}">2027-06-01</td>
                             <td th:text="'Rp ' + ${#numbers.formatDecimal(kontrak.deposit, 0, 'POINT', 0, 'COMMA')}">Rp
                                 500.000</td>
+                            <td>
+                                <span th:text="${kontrak.statusKontrak != null ? kontrak.statusKontrak : 'AKTIF'}"
+                                    th:classappend="${kontrak.statusKontrak == 'BERAKHIR'} ? 'badge bg-secondary' : 'badge bg-success'">
+                                    Status
+                                </span>
+                            </td>
+                            <td class="text-center">
+                                <form th:if="${kontrak.statusKontrak != 'BERAKHIR'}"
+                                    th:action="@{/kontrak/akhiri/{id}(id=${kontrak.idKontrak})}" method="POST"
+                                    class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-danger fw-semibold"
+                                        onclick="return confirm('Apakah Anda yakin ingin mengakhiri kontrak dan mengosongkan kamar ini?')">
+                                        <i class="bi bi-dash-circle me-1"></i> Akhiri Kontrak
+                                    </button>
+                                </form>
+                                <span th:if="${kontrak.statusKontrak == 'BERAKHIR'}" class="text-muted small">Selesai /
+                                    Keluar</span>
+                            </td>
                         </tr>
                         <tr th:if="${#lists.isEmpty(daftarKontrak)}">
-                            <td colspan="6" class="text-center text-muted">Belum ada kontrak sewa yang terdaftar.</td>
+                            <td colspan="8" class="text-center text-muted py-3">Belum ada kontrak sewa yang terdaftar.
+                            </td>
                         </tr>
                     </tbody>
                 </table>
-                <div class="mt-3">
-                    <a href="/kamar" class="btn btn-primary">Cek Status Kamar Terbaru</a>
+
+                <div class="mt-3 gap-2 d-flex">
+                    <a href="/kamar" class="btn btn-outline-secondary btn-sm fw-semibold"><i
+                            class="bi bi-door-open me-1"></i>Cek Status Kamar Terbaru</a>
                 </div>
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="modalKontrak" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-file-earmark-plus me-2"></i>Form Pembuatan Kontrak
+                        Baru</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <form th:action="@{/kontrak/tambah}" method="POST">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Pilih Penghuni</label>
+                            <select name="idPenghuni" class="form-select" required>
+                                <option th:each="u : ${daftarPenghuni}" th:if="${u.role == 'PENGHUNI'}"
+                                    th:value="${u.idUser}" th:text="${u.username}">User</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Pilih Kamar Kos (Yang Tersedia)</label>
+                            <select name="idKamar" class="form-select" required>
+                                <option th:each="k : ${daftarKamar}" th:if="${k.status == 'TERSEDIA'}"
+                                    th:value="${k.idKamar}"
+                                    th:text="${k.noKamar} + ' (Rp ' + ${k.hargaSewa} + '/Bulan)'">Kamar</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Tanggal Mulai Masuk Sewa</label>
+                            <input type="date" name="tglMulai" class="form-control" required
+                                th:value="${#calendars.format(#calendars.createNow(), 'yyyy-MM-dd')}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Uang Jaminan Deposit (Rp)</label>
+                            <input type="number" name="deposit" class="form-control" min="0"
+                                placeholder="Contoh: 500000" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-dark fw-semibold px-4">Simpan Kontrak</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js}"></script>
 </body>
 
 </html>

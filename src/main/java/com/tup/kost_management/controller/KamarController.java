@@ -1,14 +1,16 @@
 package com.tup.kost_management.controller;
 
+import com.tup.kost_management.entity.Kamar;
 import com.tup.kost_management.service.KamarService;
-
 import jakarta.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -34,5 +36,21 @@ public class KamarController {
 
         model.addAttribute("daftarKamar", kamarService.getAllKamar());
         return "kamar-view";
+    }
+
+    @PostMapping("/tambah")
+    public String tambahKamarWeb(
+            @RequestParam String nomorKamar, 
+            @RequestParam Double harga, 
+            @RequestParam String fasilitasKamar) {
+        
+        Kamar kamar = new Kamar();
+        kamar.setNoKamar(nomorKamar);
+        kamar.setFasilitas(fasilitasKamar);
+        kamar.setHargaSewa(harga);
+        kamar.setStatus("TERSEDIA"); // Default kamar baru adalah kosong
+        
+        kamarService.saveKamar(kamar);
+        return "redirect:/kamar";
     }
 }

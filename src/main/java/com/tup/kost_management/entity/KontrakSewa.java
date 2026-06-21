@@ -39,4 +39,7 @@ public class KontrakSewa {
     @ManyToOne
     @JoinColumn(name = "id_kamar", nullable = false)
     private Kamar kamar;
+
+    @Column(name = "status_kontrak", nullable = false)
+    private String statusKontrak; // Nilai: "AKTIF" atau "BERAKHIR"
 }

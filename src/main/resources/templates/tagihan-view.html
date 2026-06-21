@@ -12,15 +12,22 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 shadow-sm">
         <div class="container">
             <a class="navbar-brand" href="/"><i class="bi bi-building-fill me-2"></i>Kost Management</a>
-            <a href="/" class="btn btn-outline-light btn-sm">Kembali ke Dashboard</a>
+            <a href="/" class="btn btn-outline-light btn-sm"><i class="bi bi-arrow-left me-1"></i>Kembali ke
+                Dashboard</a>
         </div>
     </nav>
 
     <div class="container mt-5">
         <div class="card shadow border-0">
-            <div class="card-header bg-warning text-dark py-3">
-                <h3 class="mb-0 fw-bold">Daftar Tagihan Bulanan Penghuni</h3>
+            <div class="card-header bg-warning text-dark py-3 d-flex justify-content-between align-items-center">
+                <h3 class="mb-0 fw-bold">Daftar Tagihan Bulanan</h3>
+
+                <button th:if="${roleUser != null && #strings.toLowerCase(roleUser) == 'admin'}"
+                    class="btn btn-dark btn-sm fw-semibold" data-bs-toggle="modal" data-bs-target="#modalTagihan">
+                    <i class="bi bi-plus-circle me-1"></i> Terbitkan Tagihan Baru
+                </button>
             </div>
+
             <div class="card-body p-4">
                 <table class="table table-bordered table-striped align-middle mt-2">
                     <thead class="table-dark">
@@ -50,20 +57,81 @@
                                 </span>
                             </td>
                             <td class="text-center">
-                                <div th:if="${tagihan != null}">
+                                <div th:if="${tagihan != null}" class="d-inline-flex gap-2">
+
+                                    <div th:if="${tagihan.statusBayar != 'LUNAS'}">
+                                        <button
+                                            th:if="${roleUser != null && #strings.toLowerCase(roleUser) == 'penghuni'}"
+                                            type="button" class="btn btn-sm btn-success fw-semibold"
+                                            data-bs-toggle="modal"
+                                            th:data-bs-target="'#modalBayar-' + ${tagihan.idTagihan}">
+                                            <i class="bi bi-cash me-1"></i> Bayar Sekarang
+                                        </button>
+
+                                        <span th:if="${roleUser != null && #strings.toLowerCase(roleUser) == 'admin'}"
+                                            class="text-muted small">
+                                            <i class="bi bi-clock-history me-1"></i> Menunggu Pembayaran
+                                        </span>
+                                    </div>
+
                                     <a th:if="${tagihan.statusBayar == 'LUNAS'}"
                                         th:href="@{/tagihan/cetak/{id}(id=${tagihan.idTagihan})}"
                                         class="btn btn-sm btn-outline-danger fw-semibold">
                                         <i class="bi bi-file-earmark-pdf-fill me-1"></i> Cetak Invoice
                                     </a>
-                                    <span th:if="${tagihan.statusBayar != 'LUNAS'}" class="text-muted small">
-                                        <i class="bi bi-clock-history me-1"></i> Menunggu Pembayaran
-                                    </span>
+
+                                </div>
+
+                                <div th:if="${tagihan.statusBayar != 'LUNAS' && roleUser != null && #strings.toLowerCase(roleUser) == 'penghuni'}"
+                                    class="modal fade" th:id="'modalBayar-' + ${tagihan.idTagihan}" tabindex="-1"
+                                    aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header bg-success text-white">
+                                                <h5 class="modal-title fw-bold"><i
+                                                        class="bi bi-wallet2 me-2"></i>Simulasi Pembayaran Kos</h5>
+                                                <button type="button" class="btn-close btn-close-white"
+                                                    data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <form th:action="@{/tagihan/bayar/{id}(id=${tagihan.idTagihan})}"
+                                                method="POST">
+                                                <div class="modal-body text-start">
+                                                    <p class="mb-1 text-muted">Total Tagihan:</p>
+                                                    <h3 class="fw-bold text-success mb-3"
+                                                        th:text="'Rp ' + ${#numbers.formatDecimal(tagihan.jumlahTagihan, 0, 'POINT', 0, 'COMMA')}">
+                                                        Rp 0</h3>
+
+                                                    <div class="card bg-light border-0 p-3 mb-3">
+                                                        <small class="text-secondary fw-semibold d-block mb-1">Metode
+                                                            Transfer Bank (Manual):</small>
+                                                        <span class="d-block text-dark fw-bold">Bank BNI /
+                                                            Mandiri</span>
+                                                        <span class="d-block text-muted small">No. Rekening:
+                                                            1234-5678-90aa</span>
+                                                        <span class="d-block text-muted small">a.n. Manajemen Kost
+                                                            Sukses</span>
+                                                    </div>
+
+                                                    <p class="small text-danger mb-0">*Catatan: Karena sistem ini masih
+                                                        dalam tahap pengembangan (Tubes), mengeklik tombol di bawah ini
+                                                        akan langsung menyimulasikan pembayaran berhasil dan mengubah
+                                                        status menjadi LUNAS.</p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary btn-sm"
+                                                        data-bs-modal="dismiss" data-bs-dismiss="modal">Batal</button>
+                                                    <button type="submit"
+                                                        class="btn btn-success btn-sm fw-semibold px-3">Konfirmasi Sudah
+                                                        Transfer</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
                                 </div>
                             </td>
                         </tr>
                         <tr th:if="${#lists.isEmpty(daftarTagihan)}">
-                            <td colspan="7" class="text-center text-muted py-3">Belum ada data tagihan yang diterbitkan.
+                            <td colspan="7" class="text-center text-muted py-3">Belum ada data tagihan yang tersedia.
                             </td>
                         </tr>
                     </tbody>
@@ -71,6 +139,51 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="modalTagihan" tabindex="-1" aria-hidden="true"
+        th:if="${roleUser != null && #strings.toLowerCase(roleUser) == 'admin'}">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-file-earmark-plus me-2"></i>Form Menerbitkan Tagihan
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form th:action="@{/tagihan/tambah}" method="POST">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Pilih Penghuni</label>
+                            <select name="idUserPenghuni" class="form-select" required>
+                                <option th:each="user : ${daftarUser}" th:value="${user.idUser}"
+                                    th:text="${user.username}">Nama</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Periode Bulan</label>
+                            <input type="text" name="periode" class="form-control" placeholder="Contoh: Juli 2026"
+                                required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Jumlah Nominal Tagihan (Rp)</label>
+                            <input type="number" name="jumlahTagihan" class="form-control" min="0"
+                                placeholder="Contoh: 1200000" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Tanggal Jatuh Tempo</label>
+                            <input type="date" name="jatuhTempo" class="form-control" required
+                                th:value="${#calendars.format(#calendars.createNow(), 'yyyy-MM-dd')}">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-warning fw-semibold px-4">Terbitkan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js}"></script>
 </body>
 
 </html>
