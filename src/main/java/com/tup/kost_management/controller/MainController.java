@@ -10,10 +10,23 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 public class MainController {
 
     @GetMapping("/")
+    public String landingPage(HttpSession session, Model model) {
+        // Jika user ternyata sudah login dan iseng membuka landing page, kita kirim data session agar navigasi navbar bisa menyesuaikan secara cerdas
+        String role = (String) session.getAttribute("userRole");
+        if (role != null) {
+            model.addAttribute("isLoggedIn", true);
+            model.addAttribute("roleUser", role);
+        } else {
+            model.addAttribute("isLoggedIn", false);
+        }
+        return "landing-page"; // Membuka landing.html
+    }
+
+    @GetMapping("/dashboard")
     public String index(HttpSession session, Model model, @ModelAttribute("errorAkses") String errorAkses) {
         String role = (String) session.getAttribute("userRole");
         if (role == null) {
-            return "redirect:/login";
+            return "redirect:/login"; // Tendang ke login jika belum autentikasi
         }
 
         model.addAttribute("namaUser", session.getAttribute("userName"));
@@ -24,6 +37,6 @@ public class MainController {
             model.addAttribute("errorAkses", errorAkses);
         }
 
-        return "index";
+        return "index"; // Membuka index.html (Dashboard utama Anda)
     }
 }

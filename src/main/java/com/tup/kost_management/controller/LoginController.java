@@ -34,7 +34,7 @@ public class LoginController {
         if ("Admin".equals(username) && "Admin123#".equals(password)) {
             session.setAttribute("userRole", "ADMIN");
             session.setAttribute("userName", "Admin");
-            return "redirect:/";
+            return "redirect:/dashboard";
         }
         
         // Cek apakah username terdaftar di database MySQL
@@ -47,7 +47,7 @@ public class LoginController {
             if (userDariDb.getPassword().equals(password)) {
                 session.setAttribute("userRole", userDariDb.getRole());
                 session.setAttribute("userName", userDariDb.getUsername()); 
-                return "redirect:/";
+                return "redirect:/dashboard";
             }
         }
         
