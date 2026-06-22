@@ -4,134 +4,192 @@
 <head>
     <meta charset="UTF-8">
     <title>Manajemen Kontrak Sewa</title>
-    <link th:href="@{https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css}" rel="stylesheet">
-    <link th:href="@{https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css}" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 </head>
 
-<body class="bg-light">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 shadow-sm">
-        <div class="container">
-            <a class="navbar-brand" href="/"><i class="bi bi-building-fill me-2"></i>Kost Management</a>
-            <a href="/" class="btn btn-outline-light btn-sm"><i class="bi bi-arrow-left me-1"></i>Kembali ke
-                Dashboard</a>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased">
+
+    <nav class="bg-slate-900 text-white shadow-md border-b border-slate-800 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-3">
+                    <div class="bg-indigo-600 p-2 rounded-lg flex items-center justify-center shadow-md">
+                        <i class="bi bi-building-fill text-xl text-white"></i>
+                    </div>
+                    <span
+                        class="font-bold text-lg tracking-wide bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
+                        Kost Management
+                    </span>
+                </div>
+                <div>
+                    <a href="/"
+                        class="border border-slate-700 hover:bg-slate-800 text-slate-200 text-xs font-semibold px-4 py-2 rounded-lg transition duration-200 flex items-center gap-1.5 shadow-sm">
+                        <i class="bi bi-arrow-left"></i> Dashboard
+                    </a>
+                </div>
+            </div>
         </div>
     </nav>
 
-    <div class="container mt-5">
-        <div class="card shadow border-0">
-            <div class="card-header bg-dark text-white py-3 d-flex justify-content-between align-items-center">
-                <h3 class="mb-0 fw-bold"><i class="bi bi-file-earmark-text-fill me-2"></i>Daftar Kontrak Sewa Penghuni
-                </h3>
-                <button class="btn btn-primary btn-sm fw-semibold" data-bs-toggle="modal"
-                    data-bs-target="#modalKontrak">
-                    <i class="bi bi-plus-circle me-1"></i> Buat Kontrak Baru
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-grow w-full">
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+
+            <div
+                class="border-b border-slate-200 px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="bg-slate-100 border border-slate-200 text-slate-700 rounded-xl w-10 h-10 flex items-center justify-center shadow-inner">
+                        <i class="bi bi-file-earmark-text-fill text-lg"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900 tracking-tight">Daftar Kontrak Sewa Penghuni</h2>
+                        <p class="text-xs text-slate-500 font-normal">Pantau durasi sewa, status hunian, dan penyesuaian
+                            inventaris jaminan deposit.</p>
+                    </div>
+                </div>
+
+                <button onclick="document.getElementById('modalKontrak').showModal()"
+                    class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition duration-200 shadow-sm flex items-center justify-center gap-1.5 self-start sm:self-auto">
+                    <i class="bi bi-plus-circle"></i> Buat Kontrak Baru
                 </button>
             </div>
 
-            <div class="card-body p-4">
-                <table class="table table-bordered table-striped align-middle mt-2">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>ID Kontrak</th>
-                            <th>Nama Penghuni</th>
-                            <th>No Kamar</th>
-                            <th>Tgl Mulai</th>
-                            <th>Masa Berlaku</th>
-                            <th>Deposit</th>
-                            <th>Status</th>
-                            <th class="text-center">Aksi Admin</th>
+            <div class="overflow-x-auto w-full">
+                <table class="w-full text-left border-collapse align-middle">
+                    <thead>
+                        <tr class="bg-slate-900 text-white text-xs font-bold uppercase tracking-wider">
+                            <th class="py-3.5 px-6">ID Kontrak</th>
+                            <th class="py-3.5 px-6">Nama Penghuni</th>
+                            <th class="py-3.5 px-6">No Kamar</th>
+                            <th class="py-3.5 px-6">Tgl Mulai</th>
+                            <th class="py-3.5 px-6">Masa Berlaku</th>
+                            <th class="py-3.5 px-6">Deposit</th>
+                            <th class="py-3.5 px-6 text-center">Status</th>
+                            <th class="py-3.5 px-6 text-center">Aksi Admin</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr th:each="kontrak : ${daftarKontrak}">
-                            <td th:text="${kontrak.idKontrak}">1</td>
-                            <td th:text="${kontrak.penghuni.username}">budi</td>
-                            <td th:text="${kontrak.kamar.noKamar}">A101</td>
-                            <td th:text="${kontrak.tglMulai}">2026-06-01</td>
-                            <td th:text="${kontrak.tglSelesai}">2027-06-01</td>
-                            <td th:text="'Rp ' + ${#numbers.formatDecimal(kontrak.deposit, 0, 'POINT', 0, 'COMMA')}">Rp
-                                500.000</td>
-                            <td>
+                    <tbody class="divide-y divide-slate-100 text-sm font-medium text-slate-700">
+                        <tr th:each="kontrak : ${daftarKontrak}" class="hover:bg-slate-50/70 transition duration-150">
+                            <td th:text="${kontrak.idKontrak}" class="py-4 px-6 text-slate-400 font-mono">1</td>
+                            <td th:text="${kontrak.penghuni.username}" class="py-4 px-6 text-slate-900 font-bold">budi
+                            </td>
+                            <td th:text="${kontrak.kamar.noKamar}" class="py-4 px-6 text-indigo-600 font-semibold">A101
+                            </td>
+                            <td th:text="${kontrak.tglMulai}" class="py-4 px-6 font-normal text-slate-500">2026-06-01
+                            </td>
+                            <td th:text="${kontrak.tglSelesai}" class="py-4 px-6 font-normal text-slate-500">2027-06-01
+                            </td>
+                            <td th:text="'Rp ' + ${#numbers.formatDecimal(kontrak.deposit, 0, 'POINT', 0, 'COMMA')}"
+                                class="py-4 px-6 text-slate-900 font-semibold">Rp 500.000</td>
+                            <td class="py-4 px-6 text-center">
                                 <span th:text="${kontrak.statusKontrak != null ? kontrak.statusKontrak : 'AKTIF'}"
-                                    th:classappend="${kontrak.statusKontrak == 'BERAKHIR'} ? 'badge bg-secondary' : 'badge bg-success'">
+                                    th:classappend="${kontrak.statusKontrak == 'BERAKHIR'} ? 'bg-slate-100 border border-slate-200 text-slate-600' : 'bg-emerald-50 border border-emerald-200 text-emerald-700'"
+                                    class="inline-flex items-center text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
                                     Status
                                 </span>
                             </td>
-                            <td class="text-center">
+                            <td class="py-4 px-6 text-center">
                                 <form th:if="${kontrak.statusKontrak != 'BERAKHIR'}"
                                     th:action="@{/kontrak/akhiri/{id}(id=${kontrak.idKontrak})}" method="POST"
                                     class="d-inline">
-                                    <button type="submit" class="btn btn-sm btn-danger fw-semibold"
+                                    <button type="submit"
+                                        class="bg-rose-50 border border-rose-200 hover:bg-rose-100 text-rose-700 text-xs font-bold px-3 py-1.5 rounded-xl transition shadow-sm inline-flex items-center gap-1"
                                         onclick="return confirm('Apakah Anda yakin ingin mengakhiri kontrak dan mengosongkan kamar ini?')">
-                                        <i class="bi bi-dash-circle me-1"></i> Akhiri Kontrak
+                                        <i class="bi bi-dash-circle"></i> Akhiri Kontrak
                                     </button>
                                 </form>
-                                <span th:if="${kontrak.statusKontrak == 'BERAKHIR'}" class="text-muted small">Selesai /
-                                    Keluar</span>
+                                <span th:if="${kontrak.statusKontrak == 'BERAKHIR'}"
+                                    class="text-slate-400 font-normal text-xs italic">Selesai / Keluar</span>
                             </td>
                         </tr>
                         <tr th:if="${#lists.isEmpty(daftarKontrak)}">
-                            <td colspan="8" class="text-center text-muted py-3">Belum ada kontrak sewa yang terdaftar.
+                            <td colspan="8" class="text-center text-slate-400 font-normal py-10 bg-slate-50/30">
+                                <i class="bi bi-file-earmark-x text-3xl block mb-2 text-slate-300"></i>
+                                Belum ada riwayat kontrak sewa yang terdaftar.
                             </td>
                         </tr>
                     </tbody>
                 </table>
+            </div>
 
-                <div class="mt-3 gap-2 d-flex">
-                    <a href="/kamar" class="btn btn-outline-secondary btn-sm fw-semibold"><i
-                            class="bi bi-door-open me-1"></i>Cek Status Kamar Terbaru</a>
-                </div>
+            <div class="px-6 py-4 bg-slate-50 border-t border-slate-100">
+                <a href="/kamar"
+                    class="inline-flex items-center gap-1.5 text-xs font-bold text-slate-600 hover:text-indigo-600 transition">
+                    <i class="bi bi-door-open-fill"></i> Cek Status Kamar Terbaru &rarr;
+                </a>
             </div>
         </div>
-    </div>
+    </main>
 
-    <div class="modal fade" id="modalKontrak" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header bg-dark text-white">
-                    <h5 class="modal-title fw-bold"><i class="bi bi-file-earmark-plus me-2"></i>Form Pembuatan Kontrak
-                        Baru</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div>
-                <form th:action="@{/kontrak/tambah}" method="POST">
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label class="form-label">Pilih Penghuni</label>
-                            <select name="idPenghuni" class="form-select" required>
-                                <option th:each="u : ${daftarPenghuni}" th:if="${u.role == 'PENGHUNI'}"
-                                    th:value="${u.idUser}" th:text="${u.username}">User</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Pilih Kamar Kos (Yang Tersedia)</label>
-                            <select name="idKamar" class="form-select" required>
-                                <option th:each="k : ${daftarKamar}" th:if="${k.status == 'TERSEDIA'}"
-                                    th:value="${k.idKamar}"
-                                    th:text="${k.noKamar} + ' (Rp ' + ${k.hargaSewa} + '/Bulan)'">Kamar</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Tanggal Mulai Masuk Sewa</label>
-                            <input type="date" name="tglMulai" class="form-control" required
-                                th:value="${#calendars.format(#calendars.createNow(), 'yyyy-MM-dd')}">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Uang Jaminan Deposit (Rp)</label>
-                            <input type="number" name="deposit" class="form-control" min="0"
-                                placeholder="Contoh: 500000" required>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-dark fw-semibold px-4">Simpan Kontrak</button>
-                    </div>
-                </form>
+    <dialog id="modalKontrak"
+        class="backdrop:bg-slate-900/40 rounded-2xl border border-slate-200 shadow-xl max-w-md w-full p-0 overflow-hidden bg-white open:animate-fade-in">
+        <div class="bg-slate-900 text-white px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <i class="bi bi-file-earmark-plus text-lg text-indigo-400"></i>
+                <h5 class="font-bold tracking-wide">Form Pembuatan Kontrak Baru</h5>
             </div>
+            <button onclick="document.getElementById('modalKontrak').close()"
+                class="text-white/80 hover:text-white text-lg transition">
+                <i class="bi bi-x-lg"></i>
+            </button>
         </div>
-    </div>
+        <form th:action="@{/kontrak/tambah}" method="POST" class="p-6 space-y-4">
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Pilih
+                    Penghuni</label>
+                <select name="idPenghuni"
+                    class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-medium text-slate-800 focus:outline-none focus:border-indigo-500 focus:bg-white transition appearance-none cursor-pointer"
+                    required>
+                    <option th:each="u : ${daftarPenghuni}" th:if="${u.role == 'PENGHUNI'}" th:value="${u.idUser}"
+                        th:text="${u.username}">User</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Pilih Kamar Kos
+                    (Yang Tersedia)</label>
+                <select name="idKamar"
+                    class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-medium text-slate-800 focus:outline-none focus:border-indigo-500 focus:bg-white transition appearance-none cursor-pointer"
+                    required>
+                    <option th:each="k : ${daftarKamar}" th:if="${k.status == 'TERSEDIA'}" th:value="${k.idKamar}"
+                        th:text="${k.noKamar} + ' (Rp ' + ${k.hargaSewa} + '/Bulan)'">Kamar</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Tanggal Mulai
+                    Masuk Sewa</label>
+                <input type="date" name="tglMulai"
+                    class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-medium text-slate-800 focus:outline-none focus:border-indigo-500 focus:bg-white transition"
+                    required th:value="${#calendars.format(#calendars.createNow(), 'yyyy-MM-dd')}">
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Uang Jaminan
+                    Deposit (Rp)</label>
+                <input type="number" name="deposit" min="0"
+                    class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-medium text-slate-800 focus:outline-none focus:border-indigo-500 focus:bg-white transition"
+                    placeholder="Contoh: 500000" required>
+            </div>
+            <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+                <button type="button" onclick="document.getElementById('modalKontrak').close()"
+                    class="border border-slate-200 hover:bg-slate-50 text-slate-600 text-sm font-semibold px-4 py-2.5 rounded-xl transition duration-150">
+                    Batal
+                </button>
+                <button type="submit"
+                    class="bg-slate-900 hover:bg-slate-800 text-white text-sm font-semibold px-5 py-2.5 rounded-xl shadow-sm transition duration-150">
+                    Simpan Kontrak
+                </button>
+            </div>
+        </form>
+    </dialog>
 
-    <script th:src="@{https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js}"></script>
+    <footer class="bg-slate-900 text-slate-400 text-center py-5 border-t border-slate-800 w-full mt-auto">
+        <div class="max-w-7xl mx-auto px-4">
+            <p class="text-xs tracking-wide">
+                &copy; 2026 Telkom University Purwokerto &bull; Rekayasa Perangkat Lunak Kelompok 06 PBO
+            </p>
+        </div>
+    </footer>
+
 </body>
 
 </html>

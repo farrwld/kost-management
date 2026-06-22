@@ -4,88 +4,142 @@
 <head>
     <meta charset="UTF-8">
     <title>Manajemen Penghuni</title>
-    <link th:href="@{https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css}" rel="stylesheet">
-    <link th:href="@{https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css}" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 </head>
 
-<body class="bg-light">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 shadow-sm">
-        <div class="container">
-            <a class="navbar-brand" href="/"><i class="bi bi-building-fill me-2"></i>Kost Management</a>
-            <a href="/" class="btn btn-outline-light btn-sm"><i class="bi bi-arrow-left me-1"></i>Kembali ke
-                Dashboard</a>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased">
+
+    <nav class="bg-slate-900 text-white shadow-md border-b border-slate-800 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-3">
+                    <div class="bg-emerald-600 p-2 rounded-lg flex items-center justify-center shadow-md">
+                        <i class="bi bi-building-fill text-xl text-white"></i>
+                    </div>
+                    <span
+                        class="font-bold text-lg tracking-wide bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
+                        Kost Management
+                    </span>
+                </div>
+                <div>
+                    <a href="/"
+                        class="border border-slate-700 hover:bg-slate-800 text-slate-200 text-xs font-semibold px-4 py-2 rounded-lg transition duration-200 flex items-center gap-1.5 shadow-sm">
+                        <i class="bi bi-arrow-left"></i> Dashboard
+                    </a>
+                </div>
+            </div>
         </div>
     </nav>
 
-    <div class="container mt-4">
-        <div class="card shadow border-0">
-            <div class="card-header bg-success text-white d-flex justify-content-between align-items-center py-3">
-                <h4 class="mb-0"><i class="bi bi-people-fill me-2"></i>Manajemen Akun Penghuni</h4>
-                <button class="btn btn-light btn-sm fw-semibold" data-bs-toggle="modal" data-bs-target="#modalPenghuni">
-                    <i class="bi bi-person-plus-fill me-1"></i> Daftarkan Penghuni Baru
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-grow w-full">
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+
+            <div
+                class="border-b border-slate-200 px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="bg-emerald-50 border border-emerald-100 text-emerald-600 rounded-xl w-10 h-10 flex items-center justify-center shadow-inner">
+                        <i class="bi bi-people-fill text-lg"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900 tracking-tight">Manajemen Akun Penghuni</h2>
+                        <p class="text-xs text-slate-500">Registrasi akun penghuni baru dan pantau kredensial hak akses.
+                        </p>
+                    </div>
+                </div>
+
+                <button onclick="document.getElementById('modalPenghuni').showModal()"
+                    class="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition duration-200 shadow-sm flex items-center justify-center gap-1.5 self-start sm:self-auto">
+                    <i class="bi bi-person-plus-fill"></i> Daftarkan Penghuni Baru
                 </button>
             </div>
-            <div class="card-body p-4">
-                <table class="table table-bordered table-striped align-middle">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>ID User</th>
-                            <th>Username</th>
-                            <th>Password (Raw)</th>
-                            <th>Hak Akses (Role)</th>
+
+            <div class="overflow-x-auto w-full">
+                <table class="w-full text-left border-collapse align-middle">
+                    <thead>
+                        <tr class="bg-slate-900 text-white text-xs font-bold uppercase tracking-wider">
+                            <th class="py-3.5 px-6">ID User</th>
+                            <th class="py-3.5 px-6">Username</th>
+                            <th class="py-3.5 px-6">Password (Raw)</th>
+                            <th class="py-3.5 px-6 text-center">Hak Akses (Role)</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr th:each="p : ${daftarPenghuni}">
-                            <td th:text="${p.idUser}">1</td>
-                            <td th:text="${p.username}">Faris</td>
-                            <td th:text="${p.password}">pass123</td>
-                            <td>
+                    <tbody class="divide-y divide-slate-100 text-sm font-medium text-slate-700">
+                        <tr th:each="p : ${daftarPenghuni}" class="hover:bg-slate-50/70 transition duration-150">
+                            <td th:text="${p.idUser}" class="py-4 px-6 text-slate-400 font-mono">1</td>
+                            <td th:text="${p.username}" class="py-4 px-6 text-slate-900 font-bold">Faris</td>
+                            <td th:text="${p.password}" class="py-4 px-6 font-mono text-slate-500 tracking-wide">pass123
+                            </td>
+                            <td class="py-4 px-6 text-center">
                                 <span th:text="${p.role}"
-                                    th:classappend="${p.role == 'ADMIN'} ? 'badge bg-dark' : 'badge bg-info text-dark'">
+                                    th:classappend="${p.role == 'ADMIN'} ? 'bg-slate-800 border border-slate-700 text-slate-100' : 'bg-cyan-50 border border-cyan-200 text-cyan-700'"
+                                    class="inline-flex items-center text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
                                     Role
                                 </span>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(daftarPenghuni)}">
+                            <td colspan="4" class="text-center text-slate-400 font-normal py-10 bg-slate-50/30">
+                                <i class="bi bi-person-dash-fill text-3xl block mb-2 text-slate-300"></i>
+                                Belum ada akun penghuni yang terdaftar dalam sistem.
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
-    </div>
+    </main>
 
-    <div class="modal fade" id="modalPenghuni" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header bg-success text-white">
-                    <h5 class="modal-title"><i class="bi bi-person-plus-fill me-2"></i>Registrasi Penghuni Baru</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div>
-                <form th:action="@{/penghuni/tambah}" method="POST">
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label class="form-label">Username</label>
-                            <input type="text" name="username" class="form-control"
-                                placeholder="Masukkan username bebas" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Password</label>
-                            <input type="text" name="password" class="form-control" placeholder="Masukkan password"
-                                required>
-                        </div>
-
-                        <input type="hidden" name="role" value="PENGHUNI">
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn bg-success text-white px-4">Simpan Akun</button>
-                    </div>
-                </form>
+    <dialog id="modalPenghuni"
+        class="backdrop:bg-slate-900/40 rounded-2xl border border-slate-200 shadow-xl max-w-md w-full p-0 overflow-hidden bg-white open:animate-fade-in">
+        <div class="bg-emerald-600 text-white px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <i class="bi bi-person-plus-fill text-lg"></i>
+                <h5 class="font-bold tracking-wide">Registrasi Penghuni Baru</h5>
             </div>
+            <button onclick="document.getElementById('modalPenghuni').close()"
+                class="text-white/80 hover:text-white text-lg transition">
+                <i class="bi bi-x-lg"></i>
+            </button>
         </div>
-    </div>
+        <form th:action="@{/penghuni/tambah}" method="POST" class="p-6 space-y-4">
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Username</label>
+                <input type="text" name="username"
+                    class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-medium text-slate-800 focus:outline-none focus:border-emerald-500 focus:bg-white transition"
+                    placeholder="Masukkan username bebas" required>
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Password</label>
+                <input type="text" name="password"
+                    class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-medium text-slate-800 focus:outline-none focus:border-emerald-500 focus:bg-white transition"
+                    placeholder="Masukkan password" required>
+            </div>
 
-    <script th:src="@{https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js}"></script>
+            <input type="hidden" name="role" value="PENGHUNI">
+
+            <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+                <button type="button" onclick="document.getElementById('modalPenghuni').close()"
+                    class="border border-slate-200 hover:bg-slate-50 text-slate-600 text-sm font-semibold px-4 py-2.5 rounded-xl transition duration-150">
+                    Batal
+                </button>
+                <button type="submit"
+                    class="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl shadow-sm transition duration-150">
+                    Simpan Akun
+                </button>
+            </div>
+        </form>
+    </dialog>
+
+    <footer class="bg-slate-900 text-slate-400 text-center py-5 border-t border-slate-800 w-full mt-auto">
+        <div class="max-w-7xl mx-auto px-4">
+            <p class="text-xs tracking-wide">
+                &copy; 2026 Telkom University Purwokerto &bull; Rekayasa Perangkat Lunak Kelompok 06 PBO
+            </p>
+        </div>
+    </footer>
+
 </body>
 
 </html>

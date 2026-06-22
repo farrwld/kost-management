@@ -78,4 +78,33 @@ public class TagihanController {
         tagihanService.bayarTagihan(id); // Memanggil logika pelunasan service kamu
         return "redirect:/tagihan";
     }
+
+    // Tambahkan ini di dalam TagihanController.java
+    @GetMapping("/cetak/{id}")
+    public void cetakInvoiceWeb(@PathVariable Long id, jakarta.servlet.http.HttpServletResponse response) {
+        try {
+            // 1. Ambil data tagihan asli berdasarkan ID dari database
+            Tagihan tagihan = tagihanService.getAllTagihan().stream()
+                    .filter(t -> t.getIdTagihan().equals(id))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException("Tagihan tidak ditemukan"));
+
+            // 2. Atur Header HTTP agar browser tahu ini adalah file PDF kuitansi resmi
+            response.setContentType("application/pdf");
+            String headerKey = "Content-Disposition";
+            String headerValue = "attachment; filename=Invoice_Kost_#INV-" + tagihan.getIdTagihan() + ".pdf";
+            response.setHeader(headerKey, headerValue);
+
+            // 3. Panggil utilitas InvoicePdfGenerator kelas premium kita untuk menggambar PDF
+            com.tup.kost_management.utils.InvoicePdfGenerator.generate(tagihan, response);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            try {
+                response.sendError(500, "Gagal mengunduh cetak dokumen invoice: " + e.getMessage());
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
 }

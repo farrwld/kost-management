@@ -6,69 +6,201 @@ import com.lowagie.text.pdf.*;
 import jakarta.servlet.http.HttpServletResponse;
 import java.awt.Color;
 import java.io.IOException;
+import java.time.format.DateTimeFormatter;
 
 public class InvoicePdfGenerator {
 
     public static void generate(Tagihan tagihan, HttpServletResponse response) throws DocumentException, IOException {
-        Document document = new Document(PageSize.A5); // Ukuran kertas A5 cocok untuk nota/invoice
+        // Ukuran A5 dengan margin yang proporsional (Kiri, Kanan, Atas, Bawah)
+        Document document = new Document(PageSize.A5, 30, 30, 30, 30); 
         PdfWriter.getInstance(document, response.getOutputStream());
 
         document.open();
 
-        // Pengaturan Font
-        Font fontJudul = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18, Color.DARK_GRAY);
-        Font fontSub = FontFactory.getFont(FontFactory.HELVETICA, 10, Color.GRAY);
-        Font fontBold = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 11, Color.BLACK);
-        Font fontNormal = FontFactory.getFont(FontFactory.HELVETICA, 11, Color.BLACK);
+        // -------------------------------------------------------------
+        // PALET WARNA (Modern & Professional Palette)
+        // -------------------------------------------------------------
+        Color primaryColor = new Color(28, 40, 51);     // Navy / Charcoal Tua
+        Color secondaryColor = new Color(110, 114, 117); // Abu-abu Elegan
+        Color lightBgColor = new Color(245, 247, 248);   // Kertas Putih Abu Ringan
+        Color successColor = new Color(40, 167, 69);     // Hijau Sukses Lunas
 
-        // Header Invoice
-        Paragraph judul = new Paragraph("INVOICE PEMBAYARAN KOST", fontJudul);
-        judul.setAlignment(Paragraph.ALIGN_CENTER);
+        // -------------------------------------------------------------
+        // PENGATURAN FONT
+        // -------------------------------------------------------------
+        Font fontBrand = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10, secondaryColor);
+        Font fontJudul = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18, primaryColor);
+        Font fontSub = FontFactory.getFont(FontFactory.HELVETICA, 9, secondaryColor);
+        Font fontTableHeader = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10, Color.WHITE);
+        Font fontTableData = FontFactory.getFont(FontFactory.HELVETICA, 10, primaryColor);
+        Font fontTableDataBold = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10, primaryColor);
+        Font fontStatusLunas = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10, successColor);
+
+        // -------------------------------------------------------------
+        // HEADER SECTION (Layout Atas)
+        // -------------------------------------------------------------
+        // Nama Aplikasi / Brand Kecil di Pojok Atas
+        Paragraph brand = new Paragraph("KOST MANAGEMENT SYSTEM", fontBrand);
+        brand.setAlignment(Paragraph.ALIGN_LEFT);
+        document.add(brand);
+
+        // Judul Utama Invoice
+        Paragraph judul = new Paragraph("INVOICE PEMBAYARAN", fontJudul);
+        judul.setSpacingBefore(5f);
         document.add(judul);
 
-        Paragraph subJudul = new Paragraph("Telkom University Purwokerto - Tubes Kelompok 06\n\n", fontSub);
-        subJudul.setAlignment(Paragraph.ALIGN_CENTER);
+        // Sub-info Instansi Akademik
+        Paragraph subJudul = new Paragraph("Telkom University Purwokerto  •  Kelompok 06 PBO", fontSub);
+        subJudul.setSpacingAfter(15f);
         document.add(subJudul);
 
-        // Garis Pembatas
-        Paragraph garis = new Paragraph("========================================", fontSub);
-        garis.setAlignment(Paragraph.ALIGN_CENTER);
-        document.add(garis);
+        // Garis Pembatas Solid Elegan (Bukan Teks ====)
+        PdfPTable lineTable = new PdfPTable(1);
+        lineTable.setWidthPercentage(100);
+        PdfPCell lineCell = new PdfPCell();
+        lineCell.setBorder(Rectangle.BOTTOM);
+        lineCell.setBorderWidth(1.5f);
+        lineCell.setBorderColor(primaryColor);
+        lineTable.addCell(lineCell);
+        document.add(lineTable);
 
-        // Detail Konten Nota (Tabel)
-        PdfPTable table = new PdfPTable(2);
+        // -------------------------------------------------------------
+        // METADATA SECTION (Informasi Pelanggan & Waktu) 
+        // -------------------------------------------------------------
+        PdfPTable metaTable = new PdfPTable(2);
+        metaTable.setWidthPercentage(100);
+        metaTable.setSpacingBefore(12f);
+        metaTable.setSpacingAfter(15f);
+
+        // Kolom Kiri: Detail Penghuni
+        String namaPenghuni = (tagihan.getPenghuni() != null) ? tagihan.getPenghuni().getUsername() : "-";
+        
+        // Jarak baris (14f) diatur langsung di dalam objek Paragraph ini
+        Paragraph pLeft = new Paragraph(
+                "Ditagihkan Kepada:\n" +
+                "Nama: " + namaPenghuni + "\n" +
+                "Status Hunian: Aktif", fontTableData);
+        pLeft.setLeading(14f); // Ini cara mengatur jarak baris kalimat yang benar
+        
+        PdfPCell metaLeft = new PdfPCell();
+        metaLeft.addElement(pLeft); // Masukkan paragraph ke dalam cell
+        metaLeft.setBorder(Rectangle.NO_BORDER);
+        metaTable.addCell(metaLeft);
+
+        // Kolom Kanan: Detail Waktu Tagihan
+        String tglJatuhTempo = "-";
+        if (tagihan.getJatuhTempo() != null) {
+            tglJatuhTempo = tagihan.getJatuhTempo().format(DateTimeFormatter.ofPattern("dd MMMM yyyy"));
+        }
+        
+        Paragraph pRight = new Paragraph(
+                "No. Invoice : #INV-" + tagihan.getIdTagihan() + "\n" +
+                "Periode     : " + tagihan.getPeriode() + "\n" +
+                "Jatuh Tempo : " + tglJatuhTempo, fontTableData);
+        pRight.setLeading(14f); // Ini cara mengatur jarak baris kalimat yang benar
+        pRight.setAlignment(Element.ALIGN_RIGHT);
+        
+        PdfPCell metaRight = new PdfPCell();
+        metaRight.addElement(pRight); // Masukkan paragraph ke dalam cell
+        metaRight.setBorder(Rectangle.NO_BORDER);
+        metaTable.addCell(metaRight);
+
+        document.add(metaTable);
+
+        // -------------------------------------------------------------
+        // RENDER TABEL UTAMA (Detail Finansial)
+        // -------------------------------------------------------------
+        // Menggunakan perbandingan lebar kolom 60% : 40%
+        float[] columnWidths = {6f, 4f};
+        PdfPTable table = new PdfPTable(columnWidths);
         table.setWidthPercentage(100);
-        table.setSpacingBefore(15f);
-        table.setSpacingAfter(15f);
 
-        // Helper untuk tambah cell
-        addTableCell(table, "ID Tagihan", fontBold);
-        addTableCell(table, String.valueOf(tagihan.getIdTagihan()), fontNormal);
+        // Header Tabel (Deskripsi | Total)
+        addHeaderCell(table, "DESKRIPSI TAGIHAN", fontTableHeader, primaryColor);
+        addHeaderCell(table, "TOTAL NOMINAL", fontTableHeader, primaryColor);
 
-        addTableCell(table, "Bulan Tagihan", fontBold);
-        addTableCell(table, tagihan.getPeriode(), fontNormal);
+        // Baris 1: Detail Kamar & Bulan
+        addDataCell(table, "Biaya Sewa Kamar Kos (Periode " + tagihan.getPeriode() + ")", fontTableData, false, lightBgColor);
+        addDataCell(table, "Rp " + String.format("%,.0f", tagihan.getJumlahTagihan()), fontTableData, true, lightBgColor);
 
-        addTableCell(table, "Total Nominal", fontBold);
-        addTableCell(table, "Rp " + String.format("%,.0f", tagihan.getJumlahTagihan()), fontNormal);
+        // Baris 2: Informasi Status Administrasi
+        addDataCell(table, "Status Kelayakan Administrasi", fontTableData, false, Color.WHITE);
+        if ("LUNAS".equalsIgnoreCase(tagihan.getStatusBayar())) {
+            addDataCell(table, "LUNAS (Terverifikasi)", fontStatusLunas, true, Color.WHITE);
+        } else {
+            Font fontBelumLunas = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10, Color.RED);
+            addDataCell(table, tagihan.getStatusBayar(), fontBelumLunas, true, Color.WHITE);
+        }
 
-        addTableCell(table, "Status Pembayaran", fontBold);
-        addTableCell(table, tagihan.getStatusBayar(), fontNormal);
+        // Baris Terakhir: Grand Total Accent Row
+        Color totalRowColor = new Color(230, 235, 240);
+        addTotalCell(table, "TOTAL YANG DIBAYARKAN", fontTableDataBold, false, totalRowColor);
+        addTotalCell(table, "Rp " + String.format("%,.0f", tagihan.getJumlahTagihan()), fontTableDataBold, true, totalRowColor);
 
         document.add(table);
-        document.add(garis);
 
-        // Catatan Footer
-        Paragraph footer = new Paragraph("\nTerima kasih telah melakukan pembayaran tepat waktu!", fontSub);
-        footer.setAlignment(Paragraph.ALIGN_CENTER);
-        document.add(footer);
+        // -------------------------------------------------------------
+        // FOOTER SECTION
+        // -------------------------------------------------------------
+        Paragraph footerText = new Paragraph("Kuitansi ini sah dan diterbitkan secara otomatis oleh sistem keuangan internal Kost Management.", fontSub);
+        footerText.setAlignment(Paragraph.ALIGN_CENTER);
+        footerText.setSpacingBefore(25f);
+        document.add(footerText);
+
+        Paragraph terimaKasih = new Paragraph("Terima kasih telah melakukan pembayaran tepat waktu!", fontTableDataBold);
+        terimaKasih.setAlignment(Paragraph.ALIGN_CENTER);
+        terimaKasih.setSpacingBefore(5f);
+        document.add(terimaKasih);
 
         document.close();
     }
 
-    private static void addTableCell(PdfPTable table, String text, Font font) {
+    // -------------------------------------------------------------
+    // HELPER METHODS UNTUK MODIFIKASI DESAIN CELL TABEL
+    // -------------------------------------------------------------
+    private static void addHeaderCell(PdfPTable table, String text, Font font, Color bgColor) {
         PdfPCell cell = new PdfPCell(new Phrase(text, font));
+        cell.setBackgroundColor(bgColor);
         cell.setBorder(Rectangle.NO_BORDER);
-        cell.setPadding(6);
+        cell.setPaddingTop(8);
+        cell.setPaddingBottom(8);
+        cell.setPaddingLeft(10);
+        cell.setPaddingRight(10);
+        if (text.contains("TOTAL")) {
+            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+        }
+        table.addCell(cell);
+    }
+
+    private static void addDataCell(PdfPTable table, String text, Font font, boolean isRightAlign, Color bgColor) {
+        PdfPCell cell = new PdfPCell(new Phrase(text, font));
+        cell.setBackgroundColor(bgColor);
+        cell.setBorder(Rectangle.BOTTOM);
+        cell.setBorderWidth(0.5f);
+        cell.setBorderColor(new Color(220, 224, 227)); // Border bawah tipis abu-abu
+        cell.setPaddingTop(10);
+        cell.setPaddingBottom(10);
+        cell.setPaddingLeft(10);
+        cell.setPaddingRight(10);
+        if (isRightAlign) {
+            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+        }
+        table.addCell(cell);
+    }
+
+    private static void addTotalCell(PdfPTable table, String text, Font font, boolean isRightAlign, Color bgColor) {
+        PdfPCell cell = new PdfPCell(new Phrase(text, font));
+        cell.setBackgroundColor(bgColor);
+        cell.setBorder(Rectangle.BOX);
+        cell.setBorderWidth(1f);
+        cell.setBorderColor(new Color(180, 190, 200));
+        cell.setPaddingTop(10);
+        cell.setPaddingBottom(10);
+        cell.setPaddingLeft(10);
+        cell.setPaddingRight(10);
+        if (isRightAlign) {
+            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+        }
         table.addCell(cell);
     }
 }
