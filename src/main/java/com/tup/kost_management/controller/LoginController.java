@@ -38,7 +38,7 @@ public class LoginController {
         }
         
         // Cek apakah username terdaftar di database MySQL
-        Optional<User> userOpt = userRepository.findByUsername(username);
+        Optional<User> userOpt = userRepository.findByUsernameAndIsAktifTrue(username);
         
         if (userOpt.isPresent()) {
             User userDariDb = userOpt.get();

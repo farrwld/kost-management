@@ -12,7 +12,4 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class Penghuni extends User {
-
-    // Kamu bisa menambahkan atribut spesifik penghuni di sini nantinya,
-    // seperti noHp atau statusAktif jika diperlukan.
 }

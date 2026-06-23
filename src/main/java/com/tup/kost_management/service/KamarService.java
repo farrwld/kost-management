@@ -25,11 +25,22 @@ public class KamarService {
         return kamarRepository.save(kamar);
     }
 
-    public void deleteKamar(Long id) {
-        kamarRepository.deleteById(id);
+    // Mengubah status menjadi NON_AKTIF (Pengganti Delete)
+    public void nonaktifkanKamar(Long id) {
+        kamarRepository.findById(id).ifPresent(kamar -> {
+            kamar.setStatus("NON AKTIF");
+            kamarRepository.save(kamar);
+        });
     }
 
-    // Mengakomodasi Use Case: Cek Ketersediaan Kamar
+    // Mengembalikan status kamar NON_AKTIF menjadi TERSEDIA kembali
+    public void aktifkanKamar(Long id) {
+        kamarRepository.findById(id).ifPresent(kamar -> {
+            kamar.setStatus("TERSEDIA");
+            kamarRepository.save(kamar);
+        });
+    }
+
     public List<Kamar> getKamarTersedia() {
         return kamarRepository.findByStatus("TERSEDIA");
     }

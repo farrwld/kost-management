@@ -23,7 +23,7 @@
                     </span>
                 </div>
                 <div>
-                    <a href="/"
+                    <a href="/dashboard"
                         class="border border-slate-700 hover:bg-slate-800 text-slate-200 text-xs font-semibold px-4 py-2 rounded-lg transition duration-200 flex items-center gap-1.5 shadow-sm">
                         <i class="bi bi-arrow-left"></i> Dashboard
                     </a>
@@ -63,6 +63,7 @@
                             <th class="py-3.5 px-6">Detail Fasilitas Kamar</th>
                             <th class="py-3.5 px-6">Harga Bulanan</th>
                             <th class="py-3.5 px-6 text-center">Status Kelayakan</th>
+                            <th class="py-3.5 px-6 text-center">Aksi Manajemen</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 text-sm font-medium text-slate-700">
@@ -74,16 +75,40 @@
                                 Dalam</td>
                             <td th:text="'Rp ' + ${#numbers.formatDecimal(kamar.hargaSewa, 0, 'POINT', 0, 'COMMA')}"
                                 class="py-4 px-6 text-slate-900 font-semibold">Rp 0</td>
+
                             <td class="py-4 px-6 text-center">
                                 <span th:text="${kamar.status}"
-                                    th:classappend="${kamar.status == 'TERISI'} ? 'bg-rose-50 border border-rose-200 text-rose-700' : 'bg-emerald-50 border border-emerald-200 text-emerald-700'"
+                                    th:classappend="${kamar.status == 'TERISI'} ? 'bg-rose-50 border border-rose-200 text-rose-700' : (${kamar.status == 'NON AKTIF'} ? 'bg-slate-100 border border-slate-300 text-slate-600' : 'bg-emerald-50 border border-emerald-200 text-emerald-700')"
                                     class="inline-flex items-center text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
                                     Status
                                 </span>
                             </td>
+
+                            <td class="py-4 px-6 text-center">
+                                <div class="inline-flex items-center justify-center gap-2">
+
+                                    <form th:if="${kamar.status != 'NON AKTIF'}"
+                                        th:action="@{/kamar/nonaktifkan/{id}(id=${kamar.idKamar})}" method="POST"
+                                        onsubmit="return confirm('Apakah Anda yakin ingin menonaktifkan kamar ini? Kamar tidak akan muncul sebagai opsi sewa kontrak baru.');">
+                                        <button type="submit"
+                                            class="bg-rose-50 border border-rose-200 text-rose-600 text-xs font-bold px-3 py-1.5 rounded-xl hover:bg-rose-100 transition shadow-sm inline-flex items-center gap-1">
+                                            <i class="bi bi-eye-slash-fill"></i> Nonaktifkan
+                                        </button>
+                                    </form>
+
+                                    <form th:if="${kamar.status == 'NON AKTIF'}"
+                                        th:action="@{/kamar/aktifkan/{id}(id=${kamar.idKamar})}" method="POST">
+                                        <button type="submit"
+                                            class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-xl transition shadow-sm inline-flex items-center gap-1">
+                                            <i class="bi bi-arrow-counterclockwise"></i> Aktifkan Kembali
+                                        </button>
+                                    </form>
+
+                                </div>
+                            </td>
                         </tr>
                         <tr th:if="${#lists.isEmpty(daftarKamar)}">
-                            <td colspan="5" class="text-center text-slate-400 font-normal py-10 bg-slate-50/30">
+                            <td colspan="6" class="text-center text-slate-400 font-normal py-10 bg-slate-50/30">
                                 <i class="bi bi-inbox text-3xl block mb-2 text-slate-300"></i>
                                 Belum ada data kamar yang terdaftar dalam database kos.
                             </td>

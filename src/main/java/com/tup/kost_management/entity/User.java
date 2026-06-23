@@ -28,6 +28,9 @@ public class User {
 
     @NotBlank(message = "Role harus ditentukan")
     @Column(nullable = false)
-    private String role; // Nilainya bisa "ADMIN" atau "PENGHUNI"
+    private String role; // "ADMIN" atau "PENGHUNI"
 
+    // Tambahkan properti keaktifan di tingkat User utama
+    @Column(name = "is_aktif", nullable = false)
+    private boolean isAktif = true; 
 }

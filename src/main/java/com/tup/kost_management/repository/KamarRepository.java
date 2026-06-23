@@ -7,6 +7,5 @@ import java.util.List;
 
 @Repository
 public interface KamarRepository extends JpaRepository<Kamar, Long> {
-    // Sesuai use case diagram: Cek Ketersediaan Kamar
     List<Kamar> findByStatus(String status);
 }

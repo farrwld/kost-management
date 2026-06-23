@@ -30,7 +30,7 @@ public class Kamar {
 
     @NotBlank(message = "Status kamar harus ditentukan")
     @Column(nullable = false)
-    private String status; // Misal: "TERSEDIA", "TERISI", "MAINTENANCE"
+    private String status; // Opsi: "TERSEDIA", "TERISI", "MAINTENANCE", "NON_AKTIF"
 
     @Column(columnDefinition = "TEXT")
     private String fasilitas;

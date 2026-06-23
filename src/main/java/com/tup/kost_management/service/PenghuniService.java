@@ -21,13 +21,27 @@ public class PenghuniService {
         return penghuniRepository.findById(id);
     }
 
-    // Mengakomodasi Use Case: Registrasi Data Penghuni
     public Penghuni registerPenghuni(Penghuni penghuni) {
-        penghuni.setRole("PENGHUNI"); // Memastikan role terkunci di sistem
+        penghuni.setRole("PENGHUNI");
+        penghuni.setAktif(true); // Akun baru otomatis diatur AKTIF
         return penghuniRepository.save(penghuni);
     }
 
-    public void deletePenghuni(Long id) {
-        penghuniRepository.deleteById(id);
+    public List<Penghuni> getPenghuniAktif() {
+        return penghuniRepository.findByIsAktifTrue();
+    }
+
+    public void nonaktifkanPenghuni(Long id) {
+        penghuniRepository.findById(id).ifPresent(p -> {
+            p.setAktif(false);
+            penghuniRepository.save(p);
+        });
+    }
+
+    public void aktifkanPenghuni(Long id) {
+        penghuniRepository.findById(id).ifPresent(p -> {
+            p.setAktif(true);
+            penghuniRepository.save(p);
+        });
     }
 }
