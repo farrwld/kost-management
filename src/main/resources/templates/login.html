@@ -8,25 +8,25 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 </head>
 
-<body class="bg-slate-900 min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 antialiased">
+<body class="bg-stone-900 min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 antialiased">
 
     <div class="max-w-md w-full space-y-8">
         <div class="text-center">
-            <div class="inline-flex bg-indigo-600 p-3 rounded-2xl items-center justify-center shadow-lg mb-4">
+            <div class="inline-flex bg-amber-700 p-3 rounded-2xl items-center justify-center shadow-lg mb-4">
                 <i class="bi bi-building-fill text-3xl text-white"></i>
             </div>
             <h2 class="text-3xl font-extrabold tracking-tight text-white">
                 Portal Login Sistem
             </h2>
-            <p class="mt-2 text-sm text-slate-400 font-normal">
+            <p class="mt-2 text-sm text-stone-400 font-normal">
                 Silakan masuk untuk mengelola operasional hunian kos
             </p>
         </div>
 
-        <div class="bg-white rounded-2xl shadow-xl border border-slate-200/50 p-8 sm:p-10">
+        <div class="bg-white rounded-2xl shadow-xl border border-stone-200/50 p-8 sm:p-10">
 
             <div th:if="${error}"
-                class="mb-6 flex items-center gap-2 bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold p-3.5 rounded-xl uppercase tracking-wider text-center justify-center shadow-inner"
+                class="mb-6 flex items-center gap-2 bg-amber-50 border border-amber-200 text-amber-900 text-xs font-bold p-3.5 rounded-xl uppercase tracking-wider text-center justify-center shadow-inner"
                 th:text="${error}">
                 Kredensial Login Salah
             </div>
@@ -34,50 +34,49 @@
             <form th:action="@{/login}" method="POST" class="space-y-5">
                 <div>
                     <label
-                        class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Username</label>
+                        class="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Username</label>
                     <div class="relative">
-                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-stone-400">
                             <i class="bi bi-person-fill"></i>
                         </span>
                         <input type="text" name="username"
-                            class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2.5 text-sm font-medium text-slate-800 focus:outline-none focus:border-indigo-500 focus:bg-white transition"
+                            class="w-full bg-stone-50 border border-stone-200 rounded-xl pl-9 pr-4 py-2.5 text-sm font-medium text-stone-800 focus:outline-none focus:border-amber-700 focus:bg-white transition"
                             placeholder="Masukkan username Anda" required>
                     </div>
                 </div>
 
                 <div>
                     <label
-                        class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Password</label>
+                        class="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Password</label>
                     <div class="relative">
-                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-stone-400">
                             <i class="bi bi-lock-fill"></i>
                         </span>
                         <input type="password" name="password"
-                            class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2.5 text-sm font-medium text-slate-800 focus:outline-none focus:border-indigo-500 focus:bg-white transition"
+                            class="w-full bg-stone-50 border border-stone-200 rounded-xl pl-9 pr-4 py-2.5 text-sm font-medium text-stone-800 focus:outline-none focus:border-amber-700 focus:bg-white transition"
                             placeholder="••••••••••••" required>
                     </div>
                 </div>
 
                 <div class="flex items-center gap-3 pt-2">
                     <a href="/"
-                        class="w-1/2 h-[46px] border border-slate-200 hover:bg-slate-50 text-slate-600 text-sm font-bold rounded-xl transition duration-150 inline-flex items-center justify-center gap-1.5 group">
-                        <i class=""></i>
+                        class="w-1/2 h-[46px] border border-stone-200 hover:bg-stone-50 text-stone-600 text-sm font-bold rounded-xl transition duration-150 inline-flex items-center justify-center gap-1.5">
                         Kembali
                     </a>
 
                     <button type="submit"
-                        class="w-1/2 h-[46px] bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl shadow-md shadow-indigo-100 transition duration-200 flex items-center justify-center gap-1">
-                        Masuk <i class=""></i>
+                        class="w-1/2 h-[46px] bg-amber-700 hover:bg-amber-800 text-white text-sm font-bold rounded-xl shadow-sm transition duration-200 flex items-center justify-center gap-1">
+                        Masuk
                     </button>
                 </div>
             </form>
 
-            <div class="mt-6 pt-5 border-t border-slate-100 text-center">
-                <p class="text-xs text-slate-400 font-normal leading-relaxed">
+            <!-- <div class="mt-6 pt-5 border-t border-stone-100 text-center">
+                <p class="text-xs text-stone-400 font-normal leading-relaxed">
                     <i class="bi bi-info-circle me-0.5"></i> Gunakan akun simulasi Tubes Kelompok 06 PBO Telkom
                     University Purwokerto.
                 </p>
-            </div>
+            </div> -->
         </div>
     </div>
 

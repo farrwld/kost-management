@@ -8,23 +8,24 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 </head>
 
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased">
+<body class="bg-stone-50 text-stone-800 min-h-screen flex flex-col antialiased">
 
-    <nav class="bg-slate-900 text-white shadow-md border-b border-slate-800 sticky top-0 z-50">
+    <!-- NAVBAR PREMIUM COKLAT TUA -->
+    <nav class="bg-stone-900 text-stone-100 shadow-md border-b border-stone-800 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center gap-3">
-                    <div class="bg-amber-500 p-2 rounded-lg flex items-center justify-center shadow-md">
-                        <i class="bi bi-building-fill text-xl text-slate-900"></i>
+                    <div class="bg-amber-700 p-2 rounded-lg flex items-center justify-center shadow-md">
+                        <i class="bi bi-building-fill text-xl text-white"></i>
                     </div>
                     <span
-                        class="font-bold text-lg tracking-wide bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
+                        class="font-bold text-lg tracking-wide bg-gradient-to-r from-white to-stone-300 bg-clip-text text-transparent">
                         Kost Management
                     </span>
                 </div>
                 <div>
                     <a href="/dashboard"
-                        class="border border-slate-700 hover:bg-slate-800 text-slate-200 text-xs font-semibold px-4 py-2 rounded-lg transition duration-200 flex items-center gap-1.5 shadow-sm">
+                        class="border border-stone-700 hover:bg-stone-800 text-stone-200 text-xs font-semibold px-4 py-2 rounded-lg transition duration-200 flex items-center gap-1.5 shadow-sm">
                         <i class="bi bi-arrow-left"></i> Dashboard
                     </a>
                 </div>
@@ -33,33 +34,35 @@
     </nav>
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-grow w-full">
-        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
 
+            <!-- INNER HEADER VIEW -->
             <div
-                class="border-b border-slate-200 px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white">
+                class="border-b border-stone-200 px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white">
                 <div class="flex items-center gap-3">
                     <div
-                        class="bg-amber-50 border border-amber-100 text-amber-600 rounded-xl w-10 h-10 flex items-center justify-center shadow-inner">
+                        class="bg-amber-50 border border-amber-100 text-amber-800 rounded-xl w-10 h-10 flex items-center justify-center shadow-inner">
                         <i class="bi bi-cash-coin text-lg"></i>
                     </div>
                     <div>
-                        <h2 class="text-xl font-bold text-slate-900 tracking-tight">Daftar Tagihan Bulanan</h2>
-                        <p class="text-xs text-slate-500">Pantau pelaporan pembukuan transaksi sewa hunian dan cetak
+                        <h2 class="text-xl font-bold text-stone-900 tracking-tight">Daftar Tagihan Bulanan</h2>
+                        <p class="text-xs text-stone-500">Pantau pelaporan pembukuan transaksi sewa hunian dan cetak
                             invoice.</p>
                     </div>
                 </div>
 
                 <button th:if="${roleUser != null && #strings.toLowerCase(roleUser) == 'admin'}"
                     onclick="document.getElementById('modalTagihan').showModal()"
-                    class="bg-slate-900 hover:bg-slate-800 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition duration-200 shadow-sm flex items-center justify-center gap-1.5 self-start sm:self-auto">
+                    class="bg-amber-700 hover:bg-amber-800 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition duration-200 shadow-sm flex items-center justify-center gap-1.5 self-start sm:self-auto">
                     <i class="bi bi-plus-circle"></i> Terbitkan Tagihan Baru
                 </button>
             </div>
 
+            <!-- TABEL FINANCIAL DATA -->
             <div class="overflow-x-auto w-full">
                 <table class="w-full text-left border-collapse align-middle">
                     <thead>
-                        <tr class="bg-slate-900 text-white text-xs font-bold uppercase tracking-wider">
+                        <tr class="bg-stone-900 text-white text-xs font-bold uppercase tracking-wider">
                             <th class="py-3.5 px-6">ID</th>
                             <th class="py-3.5 px-6">Nama Penghuni</th>
                             <th class="py-3.5 px-6">Periode</th>
@@ -69,85 +72,93 @@
                             <th class="py-3.5 px-6 text-center">Aksi Manajemen</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-slate-100 text-sm font-medium text-slate-700">
-                        <tr th:each="tagihan : ${daftarTagihan}" class="hover:bg-slate-50/70 transition duration-150">
-                            <td th:text="${tagihan.idTagihan}" class="py-4 px-6 text-slate-400 font-mono">1</td>
-                            <td th:text="${tagihan.penghuni.username}" class="py-4 px-6 text-slate-900 font-bold">User
+                    <tbody class="divide-y divide-stone-100 text-sm font-medium text-stone-700">
+                        <tr th:each="tagihan : ${daftarTagihan}" class="hover:bg-stone-50/70 transition duration-150">
+                            <td th:text="${tagihan.idTagihan}" class="py-4 px-6 text-stone-400 font-mono">1</td>
+                            <td th:text="${tagihan.penghuni.username}" class="py-4 px-6 text-stone-900 font-bold">User
                             </td>
-                            <td th:text="${tagihan.periode}" class="py-4 px-6 font-normal text-slate-600">Juni 2026</td>
+                            <td th:text="${tagihan.periode}" class="py-4 px-6 font-normal text-stone-600">Juni 2026</td>
                             <td th:text="'Rp ' + ${#numbers.formatDecimal(tagihan.jumlahTagihan, 0, 'POINT', 0, 'COMMA')}"
-                                class="py-4 px-6 text-slate-900 font-semibold">Rp 0</td>
-                            <td th:text="${tagihan.jatuhTempo}" class="py-4 px-6 font-normal text-rose-600">2026-06-25
+                                class="py-4 px-6 text-stone-900 font-semibold">Rp 0</td>
+                            <td th:text="${tagihan.jatuhTempo}" class="py-4 px-6 font-normal text-amber-900">2026-06-25
                             </td>
+
+                            <!-- BADGE STATUS PEMBAYARAN MINIMALIS -->
                             <td class="py-4 px-6 text-center">
                                 <span th:text="${tagihan.statusBayar}"
-                                    th:classappend="${tagihan.statusBayar == 'LUNAS'} ? 'bg-emerald-50 border border-emerald-200 text-emerald-700' : 'bg-rose-50 border border-rose-200 text-rose-700'"
+                                    th:classappend="${tagihan.statusBayar == 'LUNAS'} ? 'bg-amber-50 border border-amber-200 text-amber-900' : 'bg-stone-100 border border-stone-300 text-stone-600'"
                                     class="inline-flex items-center text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
                                     Status
                                 </span>
                             </td>
+
                             <td class="py-4 px-6 text-center">
                                 <div th:if="${tagihan != null}" class="inline-flex items-center justify-center gap-2">
 
                                     <div th:if="${tagihan.statusBayar != 'LUNAS'}">
+                                        <!-- ACTION PENGHUNI -->
                                         <button
                                             th:if="${roleUser != null && #strings.toLowerCase(roleUser) == 'penghuni'}"
                                             th:onclick="'document.getElementById(\'modalBayar-\' + ' + ${tagihan.idTagihan} + ').showModal()'"
                                             type="button"
-                                            class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-xl transition shadow-sm inline-flex items-center gap-1">
+                                            class="bg-amber-700 hover:bg-amber-800 text-white text-xs font-bold px-3 py-1.5 rounded-xl transition shadow-sm inline-flex items-center gap-1">
                                             <i class="bi bi-cash"></i> Bayar Sekarang
                                         </button>
 
+                                        <!-- ACTION ADMIN -->
                                         <span th:if="${roleUser != null && #strings.toLowerCase(roleUser) == 'admin'}"
-                                            class="text-amber-600 bg-amber-50 border border-amber-200 text-xs px-2.5 py-1 rounded-lg inline-flex items-center gap-1">
+                                            class="text-stone-600 bg-stone-100 border border-stone-200 text-xs px-2.5 py-1 rounded-lg inline-flex items-center gap-1">
                                             <i class="bi bi-clock-history"></i> Belum Lunas
                                         </span>
                                     </div>
 
+                                    <!-- DOWNLOAD DOKUMEN DIGITAL INVOICE -->
                                     <a th:if="${tagihan.statusBayar == 'LUNAS'}"
                                         th:href="@{/tagihan/cetak/{id}(id=${tagihan.idTagihan})}"
-                                        class="border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold px-3 py-1.5 rounded-xl transition shadow-sm inline-flex items-center gap-1">
-                                        <i class="bi bi-file-earmark-pdf-fill"></i> Cetak Invoice
+                                        class="border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-700 text-xs font-bold px-3 py-1.5 rounded-xl transition shadow-sm inline-flex items-center gap-1">
+                                        <i class="bi bi-file-earmark-pdf-fill text-amber-800"></i> Cetak Invoice
                                     </a>
                                 </div>
 
+                                <!-- DIALOG SIMULASI PEMBAYARAN PENGHUNI -->
                                 <dialog
                                     th:if="${tagihan.statusBayar != 'LUNAS' && roleUser != null && #strings.toLowerCase(roleUser) == 'penghuni'}"
                                     th:id="'modalBayar-' + ${tagihan.idTagihan}"
-                                    class="backdrop:bg-slate-900/40 rounded-2xl border border-slate-200 shadow-xl max-w-sm w-full p-0 overflow-hidden bg-white open:animate-fade-in text-left">
-                                    <div class="bg-emerald-600 text-white px-6 py-4 flex items-center justify-between">
+                                    class="backdrop:bg-stone-900/40 rounded-2xl border border-stone-200 shadow-xl max-w-sm w-full p-0 overflow-hidden bg-white open:animate-fade-in text-left">
+                                    <div
+                                        class="bg-stone-900 text-stone-100 px-6 py-4 flex items-center justify-between">
                                         <div class="flex items-center gap-2">
                                             <i class="bi bi-wallet2 text-lg"></i>
                                             <h5 class="font-bold tracking-wide">Simulasi Pembayaran Kos</h5>
                                         </div>
                                         <button
                                             th:onclick="'document.getElementById(\'modalBayar-\' + ' + ${tagihan.idTagihan} + ').close()'"
-                                            class="text-white/80 hover:text-white transition">
+                                            class="text-stone-100/80 hover:text-white transition">
                                             <i class="bi bi-x-lg"></i>
                                         </button>
                                     </div>
                                     <form th:action="@{/tagihan/bayar/{id}(id=${tagihan.idTagihan})}" method="POST"
                                         class="p-6 space-y-4">
                                         <div>
-                                            <p class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-0.5">
+                                            <p class="text-xs font-bold uppercase tracking-wider text-stone-400 mb-0.5">
                                                 Total Tagihan Anda</p>
-                                            <h3 class="text-2xl font-black text-emerald-600 tracking-tight"
+                                            <h3 class="text-2xl font-black text-amber-800 tracking-tight"
                                                 th:text="'Rp ' + ${#numbers.formatDecimal(tagihan.jumlahTagihan, 0, 'POINT', 0, 'COMMA')}">
                                                 Rp 0</h3>
                                         </div>
                                         <div
-                                            class="bg-slate-50 border border-slate-200 p-3.5 rounded-xl space-y-1 text-xs">
+                                            class="bg-stone-50 border border-stone-200 p-3.5 rounded-xl space-y-1 text-xs">
                                             <small
-                                                class="text-slate-400 font-bold uppercase tracking-wider block mb-1">Metode
+                                                class="text-stone-400 font-bold uppercase tracking-wider block mb-1">Metode
                                                 Transfer Bank (Manual)</small>
-                                            <span class="block text-slate-800 font-bold text-sm">Bank BNI /
+                                            <span class="block text-stone-800 font-bold text-sm">Bank BNI /
                                                 Mandiri</span>
-                                            <span class="block text-slate-600 font-mono tracking-wide">No. Rekening:
+                                            <span class="block text-stone-600 font-mono tracking-wide">No. Rekening:
                                                 1234-5678-90aa</span>
-                                            <span class="block text-slate-500">a.n. Manajemen Kost Sukses</span>
+                                            <span class="block text-stone-500">a.n. Manajemen Kost Sukses</span>
                                         </div>
                                         <p
-                                            class="text-xs text-rose-600 leading-relaxed font-normal bg-rose-50/50 border border-rose-100 p-2.5 rounded-lg">
+                                            class="text-xs text-amber-900 leading-relaxed font-normal bg-amber-50/50 border border-amber-100 p-2.5 rounded-lg">
                                             <i class="bi bi-info-circle-fill me-0.5"></i> Karena sistem ini dalam tahap
                                             pengujian Tubes, mengklik konfirmasi akan langsung mengubah status menjadi
                                             <strong>LUNAS</strong>.
@@ -155,11 +166,11 @@
                                         <div class="flex items-center justify-end gap-3 pt-2">
                                             <button type="button"
                                                 th:onclick="'document.getElementById(\'modalBayar-\' + ' + ${tagihan.idTagihan} + ').close()'"
-                                                class="border border-slate-200 hover:bg-slate-50 text-slate-600 text-xs font-semibold px-3 py-2 rounded-xl transition">
+                                                class="border border-stone-200 hover:bg-stone-50 text-stone-600 text-xs font-semibold px-3 py-2 rounded-xl transition">
                                                 Batal
                                             </button>
                                             <button type="submit"
-                                                class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-sm transition">
+                                                class="bg-amber-700 hover:bg-amber-800 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-sm transition">
                                                 Konfirmasi Transfer
                                             </button>
                                         </div>
@@ -168,8 +179,8 @@
                             </td>
                         </tr>
                         <tr th:if="${#lists.isEmpty(daftarTagihan)}">
-                            <td colspan="7" class="text-center text-slate-400 font-normal py-10 bg-slate-50/30">
-                                <i class="bi bi-credit-card-2-back text-3xl block mb-2 text-slate-300"></i>
+                            <td colspan="7" class="text-center text-stone-400 font-normal py-10 bg-stone-50/30">
+                                <i class="bi bi-credit-card-2-back text-3xl block mb-2 text-stone-300"></i>
                                 Belum ada riwayat lembar tagihan keuangan terbit saat ini.
                             </td>
                         </tr>
@@ -179,63 +190,70 @@
         </div>
     </main>
 
+    <!-- DIALOG ADMIN TERBITKAN INVOICE BULANAN -->
     <dialog id="modalTagihan" th:if="${roleUser != null && #strings.toLowerCase(roleUser) == 'admin'}"
-        class="backdrop:bg-slate-900/40 rounded-2xl border border-slate-200 shadow-xl max-w-md w-full p-0 overflow-hidden bg-white open:animate-fade-in">
-        <div class="bg-slate-900 text-white px-6 py-4 flex items-center justify-between">
+        class="backdrop:bg-stone-900/40 rounded-2xl border border-stone-200 shadow-xl max-w-md w-full p-0 overflow-hidden bg-white open:animate-fade-in">
+        <div class="bg-stone-900 text-white px-6 py-4 flex items-center justify-between">
             <div class="flex items-center gap-2">
-                <i class="bi bi-file-earmark-plus text-lg text-amber-400"></i>
+                <i class="bi bi-file-earmark-plus text-lg text-amber-500"></i>
                 <h5 class="font-bold tracking-wide">Form Menerbitkan Tagihan</h5>
             </div>
             <button onclick="document.getElementById('modalTagihan').close()"
-                class="text-white/80 hover:text-white text-lg transition">
+                class="text-stone-100/80 hover:text-white text-lg transition">
                 <i class="bi bi-x-lg"></i>
             </button>
         </div>
         <form th:action="@{/tagihan/tambah}" method="POST" class="p-6 space-y-4">
             <div>
-                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Pilih
+                <label class="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Pilih
                     Penghuni</label>
                 <select name="idUserPenghuni"
-                    class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-medium text-slate-800 focus:outline-none focus:border-amber-500 focus:bg-white transition appearance-none cursor-pointer"
+                    class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-2.5 text-sm font-medium text-stone-800 focus:outline-none focus:border-amber-700 focus:bg-white transition appearance-none cursor-pointer"
                     required>
                     <option th:each="user : ${daftarUser}" th:value="${user.idUser}" th:text="${user.username}">Nama
                     </option>
                 </select>
             </div>
             <div>
-                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Periode
+                <label class="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Periode
                     Bulan</label>
                 <input type="text" name="periode"
-                    class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-medium text-slate-800 focus:outline-none focus:border-amber-500 focus:bg-white transition"
+                    class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-2.5 text-sm font-medium text-stone-800 focus:outline-none focus:border-amber-700 focus:bg-white transition"
                     placeholder="Contoh: Juli 2026" required>
             </div>
             <div>
-                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Jumlah Nominal
+                <label class="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Jumlah Nominal
                     Tagihan (Rp)</label>
                 <input type="number" name="jumlahTagihan" min="0"
-                    class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-medium text-slate-800 focus:outline-none focus:border-amber-500 focus:bg-white transition"
+                    class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-2.5 text-sm font-medium text-stone-800 focus:outline-none focus:border-amber-700 focus:bg-white transition"
                     placeholder="Contoh: 1200000" required>
             </div>
             <div>
-                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Tanggal Jatuh
+                <label class="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Tanggal Jatuh
                     Tempo</label>
                 <input type="date" name="jatuhTempo"
-                    class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-medium text-slate-800 focus:outline-none focus:border-amber-500 focus:bg-white transition"
+                    class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-2.5 text-sm font-medium text-stone-800 focus:outline-none focus:border-amber-700 focus:bg-white transition"
                     required th:value="${#calendars.format(#calendars.createNow(), 'yyyy-MM-dd')}">
             </div>
-            <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+            <div class="flex items-center justify-end gap-3 pt-4 border-t border-stone-100">
                 <button type="button" onclick="document.getElementById('modalTagihan').close()"
-                    class="border border-slate-200 hover:bg-slate-50 text-slate-600 text-sm font-semibold px-4 py-2.5 rounded-xl transition duration-150">
+                    class="border border-stone-200 hover:bg-stone-50 text-stone-600 text-sm font-semibold px-4 py-2.5 rounded-xl transition duration-150">
                     Batal
                 </button>
                 <button type="submit"
-                    class="bg-amber-500 hover:bg-amber-600 text-slate-900 text-sm font-bold px-5 py-2.5 rounded-xl shadow-sm transition duration-150">
+                    class="bg-amber-700 hover:bg-amber-800 text-white text-sm font-bold px-5 py-2.5 rounded-xl shadow-sm transition duration-150">
                     Terbitkan Tagihan
                 </button>
             </div>
         </form>
     </dialog>
-
+    <footer class="bg-stone-900 text-stone-400 text-center py-5 border-t border-stone-800 w-full mt-auto">
+        <div class="max-w-7xl mx-auto px-4">
+            <p class="text-xs tracking-wide">
+                &copy; 2026 Telkom University Purwokerto &bull; Kelompok 06 PBO
+            </p>
+        </div>
+    </footer>
 </body>
 
 </html>
