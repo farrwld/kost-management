@@ -39,22 +39,18 @@ public class InvoicePdfGenerator {
         // -------------------------------------------------------------
         // HEADER SECTION (Layout Atas)
         // -------------------------------------------------------------
-        // Nama Aplikasi / Brand Kecil di Pojok Atas
         Paragraph brand = new Paragraph("KOST MANAGEMENT SYSTEM", fontBrand);
         brand.setAlignment(Paragraph.ALIGN_LEFT);
         document.add(brand);
 
-        // Judul Utama Invoice
         Paragraph judul = new Paragraph("INVOICE PEMBAYARAN", fontJudul);
         judul.setSpacingBefore(5f);
         document.add(judul);
 
-        // Sub-info Instansi Akademik
         Paragraph subJudul = new Paragraph("Telkom University Purwokerto  •  Kelompok 06 PBO", fontSub);
         subJudul.setSpacingAfter(15f);
         document.add(subJudul);
 
-        // Garis Pembatas Solid Elegan (Bukan Teks ====)
         PdfPTable lineTable = new PdfPTable(1);
         lineTable.setWidthPercentage(100);
         PdfPCell lineCell = new PdfPCell();
@@ -65,25 +61,35 @@ public class InvoicePdfGenerator {
         document.add(lineTable);
 
         // -------------------------------------------------------------
-        // METADATA SECTION (Informasi Pelanggan & Waktu) 
+        // METADATA SECTION (FIXED: Jalur Pemanggilan Menggunakan KontrakSewa)
         // -------------------------------------------------------------
         PdfPTable metaTable = new PdfPTable(2);
         metaTable.setWidthPercentage(100);
         metaTable.setSpacingBefore(12f);
         metaTable.setSpacingAfter(15f);
 
-        // Kolom Kiri: Detail Penghuni
-        String namaPenghuni = (tagihan.getPenghuni() != null) ? tagihan.getPenghuni().getUsername() : "-";
+        // Kolom Kiri: Detail Penghuni & Informasi Kamar Otomatis
+        String namaPenghuni = "-";
+        String nomorKamar = "-";
         
-        // Jarak baris (14f) diatur langsung di dalam objek Paragraph ini
+        if (tagihan.getKontrakSewa() != null) {
+            if (tagihan.getKontrakSewa().getPenghuni() != null) {
+                namaPenghuni = tagihan.getKontrakSewa().getPenghuni().getUsername();
+            }
+            if (tagihan.getKontrakSewa().getKamar() != null) {
+                nomorKamar = tagihan.getKontrakSewa().getKamar().getNoKamar();
+            }
+        }
+        
         Paragraph pLeft = new Paragraph(
                 "Ditagihkan Kepada:\n" +
-                "Nama: " + namaPenghuni + "\n" +
-                "Status Hunian: Aktif", fontTableData);
-        pLeft.setLeading(14f); // Ini cara mengatur jarak baris kalimat yang benar
+                "Nama    : " + namaPenghuni + "\n" +
+                "Kamar   : " + nomorKamar + "\n" +
+                "Status  : Aktif", fontTableData);
+        pLeft.setLeading(14f); 
         
         PdfPCell metaLeft = new PdfPCell();
-        metaLeft.addElement(pLeft); // Masukkan paragraph ke dalam cell
+        metaLeft.addElement(pLeft); 
         metaLeft.setBorder(Rectangle.NO_BORDER);
         metaTable.addCell(metaLeft);
 
@@ -97,11 +103,11 @@ public class InvoicePdfGenerator {
                 "No. Invoice : #INV-" + tagihan.getIdTagihan() + "\n" +
                 "Periode     : " + tagihan.getPeriode() + "\n" +
                 "Jatuh Tempo : " + tglJatuhTempo, fontTableData);
-        pRight.setLeading(14f); // Ini cara mengatur jarak baris kalimat yang benar
+        pRight.setLeading(14f); 
         pRight.setAlignment(Element.ALIGN_RIGHT);
         
         PdfPCell metaRight = new PdfPCell();
-        metaRight.addElement(pRight); // Masukkan paragraph ke dalam cell
+        metaRight.addElement(pRight); 
         metaRight.setBorder(Rectangle.NO_BORDER);
         metaTable.addCell(metaRight);
 
@@ -110,17 +116,15 @@ public class InvoicePdfGenerator {
         // -------------------------------------------------------------
         // RENDER TABEL UTAMA (Detail Finansial)
         // -------------------------------------------------------------
-        // Menggunakan perbandingan lebar kolom 60% : 40%
         float[] columnWidths = {6f, 4f};
         PdfPTable table = new PdfPTable(columnWidths);
         table.setWidthPercentage(100);
 
-        // Header Tabel (Deskripsi | Total)
         addHeaderCell(table, "DESKRIPSI TAGIHAN", fontTableHeader, primaryColor);
         addHeaderCell(table, "TOTAL NOMINAL", fontTableHeader, primaryColor);
 
         // Baris 1: Detail Kamar & Bulan
-        addDataCell(table, "Biaya Sewa Kamar Kos (Periode " + tagihan.getPeriode() + ")", fontTableData, false, lightBgColor);
+        addDataCell(table, "Biaya Sewa Kamar " + nomorKamar + " (Periode " + tagihan.getPeriode() + ")", fontTableData, false, lightBgColor);
         addDataCell(table, "Rp " + String.format("%,.0f", tagihan.getJumlahTagihan()), fontTableData, true, lightBgColor);
 
         // Baris 2: Informasi Status Administrasi
@@ -129,7 +133,7 @@ public class InvoicePdfGenerator {
             addDataCell(table, "LUNAS (Terverifikasi)", fontStatusLunas, true, Color.WHITE);
         } else {
             Font fontBelumLunas = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10, Color.RED);
-            addDataCell(table, tagihan.getStatusBayar(), fontBelumLunas, true, Color.WHITE);
+            addDataCell(table, "BELUM LUNAS", fontBelumLunas, true, Color.WHITE);
         }
 
         // Baris Terakhir: Grand Total Accent Row
@@ -155,9 +159,6 @@ public class InvoicePdfGenerator {
         document.close();
     }
 
-    // -------------------------------------------------------------
-    // HELPER METHODS UNTUK MODIFIKASI DESAIN CELL TABEL
-    // -------------------------------------------------------------
     private static void addHeaderCell(PdfPTable table, String text, Font font, Color bgColor) {
         PdfPCell cell = new PdfPCell(new Phrase(text, font));
         cell.setBackgroundColor(bgColor);
@@ -177,7 +178,7 @@ public class InvoicePdfGenerator {
         cell.setBackgroundColor(bgColor);
         cell.setBorder(Rectangle.BOTTOM);
         cell.setBorderWidth(0.5f);
-        cell.setBorderColor(new Color(220, 224, 227)); // Border bawah tipis abu-abu
+        cell.setBorderColor(new Color(220, 224, 227)); 
         cell.setPaddingTop(10);
         cell.setPaddingBottom(10);
         cell.setPaddingLeft(10);

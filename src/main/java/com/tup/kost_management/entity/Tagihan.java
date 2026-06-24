@@ -27,7 +27,7 @@ public class Tagihan {
 
     @NotBlank(message = "Status bayar tidak boleh kosong")
     @Column(name = "status_bayar", nullable = false)
-    private String statusBayar; // Misal: "BELUM_BAYAR", "LUNAS"
+    private String statusBayar; // "BELUM_BAYAR", "LUNAS"
 
     @NotNull(message = "Tanggal jatuh tempo tidak boleh kosong")
     @Column(name = "jatuh_tempo", nullable = false)
@@ -35,10 +35,9 @@ public class Tagihan {
 
     @NotBlank(message = "Periode tagihan tidak boleh kosong")
     @Column(nullable = false)
-    private String periode; // Misal: "Januari 2026", "Februari 2026"
+    private String periode; 
 
-    // Relasi ke Penghuni (Many tagihan to One penghuni)
     @ManyToOne
-    @JoinColumn(name = "id_penghuni", nullable = false)
-    private Penghuni penghuni;
+    @JoinColumn(name = "id_kontrak", nullable = false)
+    private KontrakSewa kontrakSewa;
 }

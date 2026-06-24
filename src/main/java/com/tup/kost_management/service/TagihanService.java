@@ -1,53 +1,72 @@
 package com.tup.kost_management.service;
 
 import com.tup.kost_management.entity.Tagihan;
+import com.tup.kost_management.entity.KontrakSewa;
 import com.tup.kost_management.entity.Penghuni;
 import com.tup.kost_management.repository.TagihanRepository;
+import com.tup.kost_management.repository.KontrakSewaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
-import java.util.Optional;
-
 @Service
 public class TagihanService {
 
     @Autowired
     private TagihanRepository tagihanRepository;
 
-    // Admin: Mengelola/Melihat semua tagihan masuk
+    @Autowired
+    private KontrakSewaRepository kontrakSewaRepository;
+
     public List<Tagihan> getAllTagihan() {
         return tagihanRepository.findAll();
     }
 
-    // Admin: Membuat tagihan baru bulanan
-    public Tagihan buatTagihan(Tagihan tagihan) {
-        return tagihanRepository.save(tagihan);
-    }
+    // Admin: Menerbitkan tagihan cerdas terintegrasi Logika A
+    public Tagihan buatTagihanOtomatis(Long idKontrak, String periode, String jatuhTempoStr) {
+        KontrakSewa kontrak = kontrakSewaRepository.findById(idKontrak)
+                .orElseThrow(() -> new RuntimeException("Kontrak dengan ID " + idKontrak + " tidak ditemukan"));
 
-    // Penghuni: Melihat tagihan milik dirinya sendiri
-    public List<Tagihan> getTagihanByPenghuni(Long idUser) {
-        return tagihanRepository.findByPenghuniIdUser(idUser);
-    }
+        // Ambil nominal dasar dari spesifikasi kamar dalam kontrak
+        Double hargaDasarKamar = kontrak.getKamar().getHargaSewa();
+        Double jaminanDeposit = kontrak.getDeposit();
 
-    // Penghuni: Membayar Tagihan & Include Generate Invoice (Simulasi status berubah)
-    public Tagihan bayarTagihan(Long idTagihan) {
-        Optional<Tagihan> tagihanOpt = tagihanRepository.findById(idTagihan);
-        if (tagihanOpt.isPresent()) {
-            Tagihan tagihan = tagihanOpt.get();
-            tagihan.setStatusBayar("LUNAS"); // Mengubah status
+        // Deteksi berkala: Apakah sudah ada tagihan sebelum ini untuk kontrak yang bersangkutan?
+        boolean apakahTagihanPertama = !tagihanRepository.existsByKontrakSewa(kontrak);
+        
+        Double kalkulasiAkhirTagihan = hargaDasarKamar;
 
-            // 1. Ambil ID penghuni yang asli
-            Long idPenghuniAsli = tagihan.getPenghuni().getIdUser();
-            
-            // 2. Buat objek kosong baru dan hanya set ID-nya saja
-            Penghuni penghuniDibersihkan = new Penghuni();
-            penghuniDibersihkan.setIdUser(idPenghuniAsli);
-            
-            // 3. Pasang objek bersih ini kembali ke tagihan
-            tagihan.setPenghuni(penghuniDibersihkan);
-           
-            return tagihanRepository.save(tagihan); // Mengembalikan data sebagai objek "Invoice"
+        if (apakahTagihanPertama) {
+            // Logika A: Potong dengan deposit di bulan pertama sewa
+            kalkulasiAkhirTagihan = hargaDasarKamar - jaminanDeposit;
+            if (kalkulasiAkhirTagihan < 0) kalkulasiAkhirTagihan = 0.0;
         }
-        throw new RuntimeException("Tagihan tidak ditemukan dengan ID: " + idTagihan);
+
+        Tagihan tagihanNew = new Tagihan();
+        tagihanNew.setKontrakSewa(kontrak);
+        tagihanNew.setPeriode(periode);
+        tagihanNew.setJumlahTagihan(kalkulasiAkhirTagihan);
+        tagihanNew.setJatuhTempo(java.time.LocalDate.parse(jatuhTempoStr));
+        tagihanNew.setStatusBayar("BELUM_BAYAR");
+
+        return tagihanRepository.save(tagihanNew);
+    }
+
+    public List<Tagihan> getTagihanByPenghuni(Long idUser) {
+        return tagihanRepository.findByKontrakSewaPenghuniIdUser(idUser);
+    }
+
+    public Tagihan bayarTagihan(Long idTagihan) {
+        Tagihan tagihan = tagihanRepository.findById(idTagihan)
+                .orElseThrow(() -> new RuntimeException("Tagihan tidak ditemukan dengan ID: " + idTagihan));
+        
+        tagihan.setStatusBayar("LUNAS");
+        
+        // Pembersihan objek melingkar untuk pipeline Invoice PDF Generator aman
+        Long idPenghuniAsli = tagihan.getKontrakSewa().getPenghuni().getIdUser();
+        Penghuni penghuniDibersihkan = new Penghuni();
+        penghuniDibersihkan.setIdUser(idPenghuniAsli);
+        tagihan.getKontrakSewa().setPenghuni(penghuniDibersihkan);
+
+        return tagihanRepository.save(tagihan);
     }
 }

@@ -1,18 +1,16 @@
 package com.tup.kost_management.controller;
 
-import com.tup.kost_management.entity.Penghuni;
 import com.tup.kost_management.entity.Tagihan;
 import com.tup.kost_management.entity.User;
 import com.tup.kost_management.repository.UserRepository;
 import com.tup.kost_management.service.TagihanService;
-import com.tup.kost_management.service.PenghuniService; // Tambahkan import ini
+import com.tup.kost_management.service.KontrakSewaService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -28,7 +26,7 @@ public class TagihanController {
     private UserRepository userRepository;
 
     @Autowired
-    private PenghuniService penghuniService; // Tambahkan injeksi PenghuniService
+    private KontrakSewaService kontrakSewaService; // Ganti ke KontrakSewaService
 
     @GetMapping
     public String tampilkanHalamanTagihan(HttpSession session, Model model) {
@@ -42,7 +40,11 @@ public class TagihanController {
             semuaTagihan.removeIf(Objects::isNull);
             model.addAttribute("daftarTagihan", semuaTagihan);
             
-            model.addAttribute("daftarUser", penghuniService.getPenghuniAktif());
+            // Kirim daftar kontrak yang AKTIF saja untuk dropdown form penerbitan
+            List<com.tup.kost_management.entity.KontrakSewa> kontrakAktif = kontrakSewaService.getAllKontrak().stream()
+                    .filter(c -> "AKTIF".equals(c.getStatusKontrak()))
+                    .toList();
+            model.addAttribute("daftarKontrak", kontrakAktif);
         } else {
             Optional<User> userOpt = userRepository.findByUsernameAndIsAktifTrue(username);
             if (userOpt.isPresent()) {
@@ -56,22 +58,12 @@ public class TagihanController {
 
     @PostMapping("/tambah")
     public String tambahTagihanWeb(
-            @RequestParam Long idUserPenghuni,
+            @RequestParam Long idKontrak, // Ubah dari idUserPenghuni
             @RequestParam String periode,
-            @RequestParam Double jumlahTagihan,
             @RequestParam String jatuhTempo) {
         
-        Tagihan tagihan = new Tagihan();
-        tagihan.setPeriode(periode);
-        tagihan.setJumlahTagihan(jumlahTagihan);
-        tagihan.setJatuhTempo(LocalDate.parse(jatuhTempo));
-        tagihan.setStatusBayar("BELUM_BAYAR");
-
-        Penghuni p = new Penghuni();
-        p.setIdUser(idUserPenghuni);
-        tagihan.setPenghuni(p);
-
-        tagihanService.buatTagihan(tagihan);
+        // Panggil service pintar yang otomatis menghitung Logika A
+        tagihanService.buatTagihanOtomatis(idKontrak, periode, jatuhTempo);
         return "redirect:/tagihan";
     }
 
